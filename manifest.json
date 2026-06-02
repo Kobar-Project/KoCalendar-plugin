@@ -1,0 +1,27 @@
+{
+  "id": "kobar.kocalendar",
+  "name": "KoCalendar",
+  "version": "1.0.0",
+  "description": "An interactive, draggable calendar popup integrated natively into KoBar.",
+  "author": "KoBar",
+  "entry": "index.js",
+  "icon": "calendar_month",
+  "categories": [
+    "Productivity",
+    "Utility"
+  ],
+  "isBeta": false,
+  "githubRepo": "Kobar-Project/KoCalendar-plugin",
+  "languages": [
+    "en",
+    "tr",
+    "de",
+    "es",
+    "fr",
+    "ru",
+    "ar",
+    "zh",
+    "ja",
+    "hi"
+  ]
+}
