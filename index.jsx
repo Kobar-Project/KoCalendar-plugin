@@ -155,7 +155,11 @@ const KoCalendarPluginPanel = (props) => {
 
     const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
     const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-    const handleToday = () => setCurrentDate(new Date());
+    const handleToday = () => {
+        const today = new Date();
+        setCurrentDate(today);
+        setSelectedDate(today);
+    };
 
     const handleImportHolidays = (e) => {
         const file = e.target.files?.[0];
@@ -583,7 +587,15 @@ const KoCalendarPluginPanel = (props) => {
                                         const isEvSelected = isSameDay(eventDate, selectedDate);
                                         
                                         return (
-                                            <div key={ev.id} className="flex justify-between items-center text-sm group/event hover:bg-white/5 rounded px-2 py-1.5 transition-colors" style={{ backgroundColor: isEvSelected ? `color-mix(in srgb, ${ev.colorId || koCalendarColor} 5%, transparent)` : 'transparent' }}>
+                                            <div 
+                                                key={ev.id} 
+                                                onClick={() => {
+                                                    setSelectedDate(eventDate);
+                                                    setCurrentDate(eventDate);
+                                                }}
+                                                className="flex justify-between items-center text-sm group/event hover:bg-white/5 rounded px-2 py-1.5 transition-colors cursor-pointer" 
+                                                style={{ backgroundColor: isEvSelected ? `color-mix(in srgb, ${ev.colorId || koCalendarColor} 5%, transparent)` : 'transparent' }}
+                                            >
                                                 <div className="flex items-start gap-2.5 flex-1 min-w-0 mr-3 mt-1">
                                                     <div className="w-2 h-2 rounded-full shrink-0 mt-1" style={{ backgroundColor: isEvSelected ? (ev.colorId || koCalendarColor) : isEvToday ? 'var(--theme-primary)' : 'var(--theme-text-faded)' }} />
                                                     <div className="flex flex-col min-w-0 flex-1">
@@ -608,7 +620,8 @@ const KoCalendarPluginPanel = (props) => {
                                                         {isEvSelected ? format(eventDate, 'HH:mm') : format(eventDate, 'MMM d')}
                                                     </span>
                                                     <button 
-                                                        onClick={() => {
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
                                                             const d = parseISO(ev.startTime);
                                                             setEditingEventDate(d);
                                                             setEditingEventId(ev.id);
@@ -625,7 +638,10 @@ const KoCalendarPluginPanel = (props) => {
                                                         <span className="material-symbols-outlined text-[12px]">edit</span>
                                                     </button>
                                                     <button 
-                                                        onClick={() => deleteCalendarEvent(ev.id)}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            deleteCalendarEvent(ev.id);
+                                                        }}
                                                         className="hidden group-hover/event:flex w-4 h-4 items-center justify-center text-red-400 hover:text-red-300 bg-red-400/10 rounded"
                                                     >
                                                         <span className="material-symbols-outlined text-[12px]">delete</span>

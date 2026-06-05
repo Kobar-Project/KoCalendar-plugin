@@ -1853,7 +1853,11 @@
     }, [anchorRect, screenBounds, orientation]);
     const handlePrevMonth = () => setCurrentDate(subMonths(currentDate, 1));
     const handleNextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-    const handleToday = () => setCurrentDate(/* @__PURE__ */ new Date());
+    const handleToday = () => {
+      const today = /* @__PURE__ */ new Date();
+      setCurrentDate(today);
+      setSelectedDate(today);
+    };
     const handleImportHolidays = (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -2144,35 +2148,52 @@
           const eventDate = parseISO(ev.startTime);
           const isEvToday = isSameDay(eventDate, /* @__PURE__ */ new Date());
           const isEvSelected = isSameDay(eventDate, selectedDate);
-          return /* @__PURE__ */ window.React.createElement("div", { key: ev.id, className: "flex justify-between items-center text-sm group/event hover:bg-white/5 rounded px-2 py-1.5 transition-colors", style: { backgroundColor: isEvSelected ? `color-mix(in srgb, ${ev.colorId || koCalendarColor} 5%, transparent)` : "transparent" } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-start gap-2.5 flex-1 min-w-0 mr-3 mt-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-2 h-2 rounded-full shrink-0 mt-1", style: { backgroundColor: isEvSelected ? ev.colorId || koCalendarColor : isEvToday ? "var(--theme-primary)" : "var(--theme-text-faded)" } }), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col min-w-0 flex-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: isEvSelected ? ev.colorId || koCalendarColor : "#fff", fontWeight: isEvSelected ? "600" : "400" } }, ev.title), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
-            e.stopPropagation();
-            window.api?.openExternal?.(ev.meetingLink);
-          }, className: "text-blue-400 hover:text-blue-300 ml-1 shrink-0 bg-blue-400/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors", title: t("joinMeeting") || "Join Meeting" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "videocam")), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-xs text-primary/50 shrink-0" }, "notifications_active")), ev.description && /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-400 truncate mt-0.5", title: ev.description }, ev.description))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs group-hover/event:hidden", style: { color: isEvSelected ? ev.colorId || koCalendarColor : "#cbd5e1" } }, isEvSelected ? format(eventDate, "HH:mm") : format(eventDate, "MMM d")), /* @__PURE__ */ window.React.createElement(
-            "button",
+          return /* @__PURE__ */ window.React.createElement(
+            "div",
             {
+              key: ev.id,
               onClick: () => {
-                const d = parseISO(ev.startTime);
-                setEditingEventDate(d);
-                setEditingEventId(ev.id);
-                setNewEventTitle(ev.title);
-                setNewEventDescription(ev.description || "");
-                setNewEventMeetingLink(ev.meetingLink || "");
-                setNewEventHours(format(d, "HH"));
-                setNewEventMinutes(format(d, "mm"));
-                setNewEventNotification(!!ev.notificationEnabled);
-                setNewEventColor(ev.colorId || koCalendarColor);
+                setSelectedDate(eventDate);
+                setCurrentDate(eventDate);
               },
-              className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-blue-400 hover:text-blue-300 bg-blue-400/10 rounded"
+              className: "flex justify-between items-center text-sm group/event hover:bg-white/5 rounded px-2 py-1.5 transition-colors cursor-pointer",
+              style: { backgroundColor: isEvSelected ? `color-mix(in srgb, ${ev.colorId || koCalendarColor} 5%, transparent)` : "transparent" }
             },
-            /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "edit")
-          ), /* @__PURE__ */ window.React.createElement(
-            "button",
-            {
-              onClick: () => deleteCalendarEvent(ev.id),
-              className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-red-400 hover:text-red-300 bg-red-400/10 rounded"
-            },
-            /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "delete")
-          )));
+            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-start gap-2.5 flex-1 min-w-0 mr-3 mt-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-2 h-2 rounded-full shrink-0 mt-1", style: { backgroundColor: isEvSelected ? ev.colorId || koCalendarColor : isEvToday ? "var(--theme-primary)" : "var(--theme-text-faded)" } }), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col min-w-0 flex-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: isEvSelected ? ev.colorId || koCalendarColor : "#fff", fontWeight: isEvSelected ? "600" : "400" } }, ev.title), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
+              e.stopPropagation();
+              window.api?.openExternal?.(ev.meetingLink);
+            }, className: "text-blue-400 hover:text-blue-300 ml-1 shrink-0 bg-blue-400/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors", title: t("joinMeeting") || "Join Meeting" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "videocam")), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-xs text-primary/50 shrink-0" }, "notifications_active")), ev.description && /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-400 truncate mt-0.5", title: ev.description }, ev.description))),
+            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs group-hover/event:hidden", style: { color: isEvSelected ? ev.colorId || koCalendarColor : "#cbd5e1" } }, isEvSelected ? format(eventDate, "HH:mm") : format(eventDate, "MMM d")), /* @__PURE__ */ window.React.createElement(
+              "button",
+              {
+                onClick: (e) => {
+                  e.stopPropagation();
+                  const d = parseISO(ev.startTime);
+                  setEditingEventDate(d);
+                  setEditingEventId(ev.id);
+                  setNewEventTitle(ev.title);
+                  setNewEventDescription(ev.description || "");
+                  setNewEventMeetingLink(ev.meetingLink || "");
+                  setNewEventHours(format(d, "HH"));
+                  setNewEventMinutes(format(d, "mm"));
+                  setNewEventNotification(!!ev.notificationEnabled);
+                  setNewEventColor(ev.colorId || koCalendarColor);
+                },
+                className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-blue-400 hover:text-blue-300 bg-blue-400/10 rounded"
+              },
+              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "edit")
+            ), /* @__PURE__ */ window.React.createElement(
+              "button",
+              {
+                onClick: (e) => {
+                  e.stopPropagation();
+                  deleteCalendarEvent(ev.id);
+                },
+                className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-red-400 hover:text-red-300 bg-red-400/10 rounded"
+              },
+              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "delete")
+            ))
+          );
         }), agendaData.length === 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col items-center justify-center h-full opacity-30 mt-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-500 italic" }, t("noEventsFound") || "No events found"))));
       })()))
     );

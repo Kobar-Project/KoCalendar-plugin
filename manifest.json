@@ -1,7 +1,7 @@
 {
-  "id": "kobar.kocalendar",
+  "id": "ko-calender-plugin",
   "name": "KoCalendar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "An interactive, draggable calendar popup integrated natively into KoBar.",
   "author": "KoBar",
   "entry": "index.js",
@@ -23,5 +23,12 @@
     "zh",
     "ja",
     "hi"
+  ],
+  "versionNote": "Updated plugin images.",
+  "image": "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/kocalender.png",
+  "storeImage": [
+    "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar1.png",
+    "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar2.png",
+    "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar3.png"
   ]
 }
