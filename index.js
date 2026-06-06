@@ -1725,17 +1725,47 @@
     const screenBounds = useAppStore((state) => state.screenBounds);
     const isSmartPositioning = useAppStore((state) => state.isPopupSmartPositioning);
     const isMac = useAppStore((state) => state.isMac);
-    const todos = useAppStore((state) => state.todos || []);
-    const localEvents = useAppStore((state) => state.localEvents || []);
-    const addCalendarEvent = useAppStore((state) => state.addCalendarEvent || (() => {
-    }));
-    const updateCalendarEvent = useAppStore((state) => state.updateCalendarEvent || (() => {
-    }));
-    const deleteCalendarEvent = useAppStore((state) => state.deleteCalendarEvent || (() => {
-    }));
-    const koCalendarColor = useAppStore((state) => state.koCalendarColor) || "#60a5fa";
-    const setKoCalendarColor = useAppStore((state) => state.setKoCalendarColor) || (() => {
+    const todos = (() => {
+      try {
+        return JSON.parse(localStorage.getItem("kobar_plugin_todos") || "[]");
+      } catch {
+        return [];
+      }
+    })();
+    const [localEvents, setLocalEventsState] = useState(() => {
+      try {
+        const saved = localStorage.getItem("kobar_plugin_events");
+        if (saved) return JSON.parse(saved);
+      } catch (e) {
+      }
+      return [];
     });
+    const [koCalendarColor, setKoCalendarColorState] = useState(() => {
+      try {
+        const saved = localStorage.getItem("kobar_plugin_calendar_color");
+        if (saved) return saved;
+      } catch (e) {
+      }
+      return "#60a5fa";
+    });
+    useEffect(() => {
+      localStorage.setItem("kobar_plugin_events", JSON.stringify(localEvents));
+    }, [localEvents]);
+    useEffect(() => {
+      localStorage.setItem("kobar_plugin_calendar_color", koCalendarColor);
+    }, [koCalendarColor]);
+    const addCalendarEvent = (event) => {
+      setLocalEventsState((prev) => [...prev, { ...event, id: Date.now().toString() + "-" + Math.floor(Math.random() * 1e3), colorId: event.colorId || koCalendarColor }]);
+    };
+    const updateCalendarEvent = (id, updatedEvent) => {
+      setLocalEventsState((prev) => prev.map((e) => e.id === id ? { ...e, ...updatedEvent } : e));
+    };
+    const deleteCalendarEvent = (id) => {
+      setLocalEventsState((prev) => prev.filter((e) => e.id !== id));
+    };
+    const setKoCalendarColor = (color) => {
+      setKoCalendarColorState(color);
+    };
     const t = useAppStore((state) => state.t) || ((k) => k);
     const [currentDate, setCurrentDate] = useState(/* @__PURE__ */ new Date());
     const [selectedDate, setSelectedDate] = useState(/* @__PURE__ */ new Date());
