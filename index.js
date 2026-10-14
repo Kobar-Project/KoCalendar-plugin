@@ -140,6 +140,13 @@
   function isValid(date) {
     return !(!isDate(date) && typeof date !== "number" || isNaN(+toDate(date)));
   }
+  function endOfMonth(date, options) {
+    const _date = toDate(date, options?.in);
+    const month = _date.getMonth();
+    _date.setFullYear(_date.getFullYear(), month + 1, 0);
+    _date.setHours(23, 59, 59, 999);
+    return _date;
+  }
   function startOfMonth(date, options) {
     const _date = toDate(date, options?.in);
     _date.setDate(1);
@@ -1717,6 +1724,33 @@
   const React = window.React;
   const { useState, useEffect, useRef } = React;
   const useAppStore = window.useAppStore;
+  const GCAL_COLOR = "#4285f4";
+  const gcalSupported = () => typeof window !== "undefined" && window.api && typeof window.api.gcalListEvents === "function";
+  const GCAL_TEXT = {
+    en: { setup: "Google Calendar: set up in Settings > Integrations", reconnect: "Google Calendar: reconnect in Settings > Integrations", title: "Google Calendar (read-only)", allDay: "All day" },
+    tr: { setup: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden kurun", reconnect: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden yeniden bağlanın", title: "Google Takvim (salt okunur)", allDay: "Tüm gün" }
+  };
+  const gcalDayKey = (d) => format(d, "yyyy-MM-dd");
+  const gcalEventsOnDay = (events, day) => {
+    const key = gcalDayKey(day);
+    const dayStart = new Date(day);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    return events.filter((ev) => {
+      if (!ev || !ev.start) return false;
+      if (ev.allDay) {
+        const s2 = String(ev.start).slice(0, 10);
+        const e2 = String(ev.end || ev.start).slice(0, 10);
+        return s2 <= key && key <= (e2 < s2 ? s2 : e2);
+      }
+      const s = new Date(ev.start);
+      const e = new Date(ev.end || ev.start);
+      if (isNaN(s.getTime())) return false;
+      if (isNaN(e.getTime()) || e <= s) return s >= dayStart && s < dayEnd;
+      return s < dayEnd && e > dayStart;
+    });
+  };
   const KoCalendarPluginPanel = (props) => {
     const { onClose, anchorRect } = props;
     const edgePosition = useAppStore((state) => state.edgePosition);
@@ -1767,7 +1801,50 @@
       setKoCalendarColorState(color);
     };
     const t = useAppStore((state) => state.t) || ((k) => k);
+    const language = useAppStore((state) => state.language);
+    const gt = GCAL_TEXT[language] || GCAL_TEXT.en;
     const [currentDate, setCurrentDate] = useState(/* @__PURE__ */ new Date());
+    const [gcalState, setGcalState] = useState(null);
+    const [gcalEvents, setGcalEvents] = useState([]);
+    const gcalMonthKey = format(currentDate, "yyyy-MM");
+    useEffect(() => {
+      if (!gcalSupported()) return void 0;
+      let cancelled = false;
+      const refresh = async () => {
+        try {
+          const st = await window.api.gcalStatus?.();
+          if (cancelled) return;
+          setGcalState(st || null);
+          if (!st || st.state !== "connected" || !st.enabled) {
+            setGcalEvents([]);
+            return;
+          }
+          const base = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          const from = startOfMonth(subMonths(base, 1));
+          const to = endOfMonth(addMonths(base, 1));
+          const list = await window.api.gcalListEvents({ from: from.toISOString(), to: to.toISOString() });
+          if (!cancelled) setGcalEvents(Array.isArray(list) ? list : []);
+        } catch {
+          if (!cancelled) setGcalEvents([]);
+        }
+      };
+      refresh();
+      const timer = setInterval(() => {
+        if (document.visibilityState !== "hidden") refresh();
+      }, 15 * 60 * 1e3);
+      return () => {
+        cancelled = true;
+        clearInterval(timer);
+      };
+    }, [gcalMonthKey]);
+    const gcalActive = !!(gcalState && gcalState.state === "connected" && gcalState.enabled);
+    const gcalNeedsSetup = !!(gcalSupported() && gcalState && (gcalState.state === "not-connected" || gcalState.state === "reconnect-needed"));
+    const openGcalSettings = () => {
+      try {
+        window.api?.openSettings?.("integrations");
+      } catch {
+      }
+    };
     const [selectedDate, setSelectedDate] = useState(/* @__PURE__ */ new Date());
     const [editingEventDate, setEditingEventDate] = useState(null);
     const [editingEventId, setEditingEventId] = useState(null);
@@ -2009,7 +2086,7 @@
             }
           },
           /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center px-1 mb-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs font-bold", style: { color: isToday ? "var(--theme-primary)" : isSelected ? koCalendarColor : isCurrentMonth ? "#fff" : "var(--theme-text-faded)" } }, format(day, "d")), isSelected && /* @__PURE__ */ window.React.createElement("div", { className: "w-1.5 h-1.5 rounded-full", style: { backgroundColor: koCalendarColor } })),
-          /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-[3px] mt-auto overflow-hidden" }, dayEvents.slice(0, 2).map((ev, ei) => /* @__PURE__ */ window.React.createElement("div", { key: ei, className: "w-full h-1 rounded-full", style: { backgroundColor: ev.colorId || koCalendarColor, opacity: 0.8 }, title: ev.title })), dayTodos.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-start gap-[2px] px-0.5" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-[2px] rounded-full bg-primary/40" })))
+          /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-[3px] mt-auto overflow-hidden" }, dayEvents.slice(0, 2).map((ev, ei) => /* @__PURE__ */ window.React.createElement("div", { key: ei, className: "w-full h-1 rounded-full", style: { backgroundColor: ev.colorId || koCalendarColor, opacity: 0.8 }, title: ev.title })), gcalActive && gcalEventsOnDay(gcalEvents, day).length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-1 rounded-full", style: { backgroundColor: GCAL_COLOR, opacity: 0.8 }, title: gt.title }), dayTodos.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-start gap-[2px] px-0.5" }, /* @__PURE__ */ window.React.createElement("div", { className: "w-full h-[2px] rounded-full bg-primary/40" })))
         );
       })), pendingHolidays ? /* @__PURE__ */ window.React.createElement("div", { className: "p-3 border-t border-white/5 bg-black/40 flex flex-col gap-2 flex-1 animate-in slide-in-from-bottom-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center mb-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-sm font-semibold text-slate-300" }, t("importHolidays") || "Import Holidays"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => setPendingHolidays(null), className: "w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "close"))), /* @__PURE__ */ window.React.createElement("div", { className: "text-xs text-slate-400 mb-2" }, "Found ", pendingHolidays.length, " holidays. Select a color to associate with them:"), /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-2 bg-black/20 border border-white/10 rounded-lg p-2 w-fit mx-auto mb-2" }, ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"].map((color) => /* @__PURE__ */ window.React.createElement(
         "button",
@@ -2171,10 +2248,10 @@
         targetStartOfDay.setHours(0, 0, 0, 0);
         const agendaData = localEvents.filter((e) => e.startTime && new Date(e.startTime) >= targetStartOfDay).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
         const selectedDayHasEvent = agendaData.length > 0 && isSameDay(parseISO(agendaData[0].startTime), selectedDate);
-        return /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center pr-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs font-bold text-slate-200 uppercase tracking-widest" }, selectedDayHasEvent ? `${format(selectedDate, "MMM d")} - ${t("events") || "Events"}` : t("upcomingEvents") || "Upcoming Events"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
+        return /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, gcalNeedsSetup && (typeof window.api?.openSettings === "function" ? /* @__PURE__ */ window.React.createElement("button", { onClick: openGcalSettings, className: "text-[10px] text-left underline", style: { color: GCAL_COLOR } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup) : /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-400" }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup)), /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center pr-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs font-bold text-slate-200 uppercase tracking-widest" }, selectedDayHasEvent ? `${format(selectedDate, "MMM d")} - ${t("events") || "Events"}` : t("upcomingEvents") || "Upcoming Events"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
           setEditingEventDate(selectedDate);
           setNewEventColor(koCalendarColor);
-        }, className: "w-6 h-6 rounded-full bg-primary/20 text-primary opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/40 flex items-center justify-center relative z-20" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-1 overflow-y-auto overflow-x-hidden custom-scrollbar h-[160px] animate-in fade-in slide-in-from-top-1 pr-1" }, agendaData.slice(0, 8).map((ev) => {
+        }, className: "w-6 h-6 rounded-full bg-primary/20 text-primary opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/40 flex items-center justify-center relative z-20" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-1 overflow-y-auto overflow-x-hidden custom-scrollbar h-[160px] animate-in fade-in slide-in-from-top-1 pr-1" }, gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map((gev) => /* @__PURE__ */ window.React.createElement("div", { key: gev.id, title: gt.title, className: "flex justify-between items-center text-sm rounded px-2 py-1.5 cursor-default select-none", style: { backgroundColor: `color-mix(in srgb, ${GCAL_COLOR} 8%, transparent)` } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] shrink-0", style: { color: GCAL_COLOR } }, "event"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate text-slate-200" }, gev.title)), /* @__PURE__ */ window.React.createElement("span", { className: "text-xs shrink-0", style: { color: GCAL_COLOR } }, gev.allDay ? gt.allDay : format(new Date(gev.start), "HH:mm")))), agendaData.slice(0, 8).map((ev) => {
           const eventDate = parseISO(ev.startTime);
           const isEvToday = isSameDay(eventDate, /* @__PURE__ */ new Date());
           const isEvSelected = isSameDay(eventDate, selectedDate);

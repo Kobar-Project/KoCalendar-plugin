@@ -3,6 +3,33 @@ const { useState, useEffect, useRef } = React;
 const useAppStore = window.useAppStore;
 import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, format, isSameMonth, isSameDay, addMonths, subMonths, eachDayOfInterval, parseISO, addDays } from 'date-fns';
 
+// --- Google Calendar (read-only, in-memory layer; never persisted) ---
+const GCAL_COLOR = '#4285f4';
+const gcalSupported = () => typeof window !== 'undefined' && window.api && typeof window.api.gcalListEvents === 'function';
+const GCAL_TEXT = {
+    en: { setup: 'Google Calendar: set up in Settings > Integrations', reconnect: 'Google Calendar: reconnect in Settings > Integrations', title: 'Google Calendar (read-only)', allDay: 'All day' },
+    tr: { setup: 'Google Takvim: Ayarlar > Entegrasyonlar bölümünden kurun', reconnect: 'Google Takvim: Ayarlar > Entegrasyonlar bölümünden yeniden bağlanın', title: 'Google Takvim (salt okunur)', allDay: 'Tüm gün' },
+};
+const gcalDayKey = (d) => format(d, 'yyyy-MM-dd');
+// All-day events use 'YYYY-MM-DD' with an INCLUSIVE end: compare as plain strings, never via Date (avoids UTC off-by-one).
+const gcalEventsOnDay = (events, day) => {
+    const key = gcalDayKey(day);
+    const dayStart = new Date(day); dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate() + 1);
+    return events.filter(ev => {
+        if (!ev || !ev.start) return false;
+        if (ev.allDay) {
+            const s = String(ev.start).slice(0, 10);
+            const e = String(ev.end || ev.start).slice(0, 10);
+            return s <= key && key <= (e < s ? s : e);
+        }
+        const s = new Date(ev.start); const e = new Date(ev.end || ev.start);
+        if (isNaN(s.getTime())) return false;
+        if (isNaN(e.getTime()) || e <= s) return s >= dayStart && s < dayEnd;
+        return s < dayEnd && e > dayStart;
+    });
+};
+
 const KoCalendarPluginPanel = (props) => {
     const { onClose, anchorRect } = props;
     
@@ -61,8 +88,40 @@ const KoCalendarPluginPanel = (props) => {
         setKoCalendarColorState(color);
     };
     const t = useAppStore(state => state.t) || ((k) => k);
+    const language = useAppStore(state => state.language);
+    const gt = GCAL_TEXT[language] || GCAL_TEXT.en;
 
     const [currentDate, setCurrentDate] = useState(new Date());
+    // Google layer: component memory only, read-only. Failures leave it empty.
+    const [gcalState, setGcalState] = useState(null);
+    const [gcalEvents, setGcalEvents] = useState([]);
+    const gcalMonthKey = format(currentDate, 'yyyy-MM');
+    useEffect(() => {
+        if (!gcalSupported()) return undefined;
+        let cancelled = false;
+        const refresh = async () => {
+            try {
+                const st = await window.api.gcalStatus?.();
+                if (cancelled) return;
+                setGcalState(st || null);
+                if (!st || st.state !== 'connected' || !st.enabled) { setGcalEvents([]); return; }
+                const base = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+                const from = startOfMonth(subMonths(base, 1));
+                const to = endOfMonth(addMonths(base, 1));
+                const list = await window.api.gcalListEvents({ from: from.toISOString(), to: to.toISOString() });
+                if (!cancelled) setGcalEvents(Array.isArray(list) ? list : []);
+            } catch {
+                if (!cancelled) setGcalEvents([]);
+            }
+        };
+        refresh();
+        const timer = setInterval(() => { if (document.visibilityState !== 'hidden') refresh(); }, 15 * 60 * 1000);
+        return () => { cancelled = true; clearInterval(timer); };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gcalMonthKey]);
+    const gcalActive = !!(gcalState && gcalState.state === 'connected' && gcalState.enabled);
+    const gcalNeedsSetup = !!(gcalSupported() && gcalState && (gcalState.state === 'not-connected' || gcalState.state === 'reconnect-needed'));
+    const openGcalSettings = () => { try { window.api?.openSettings?.('integrations'); } catch { /* ignore */ } };
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [editingEventDate, setEditingEventDate] = useState(null);
     const [editingEventId, setEditingEventId] = useState(null);
@@ -375,6 +434,9 @@ const KoCalendarPluginPanel = (props) => {
                                 {dayEvents.slice(0, 2).map((ev, ei) => (
                                     <div key={ei} className="w-full h-1 rounded-full" style={{ backgroundColor: ev.colorId || koCalendarColor, opacity: 0.8 }} title={ev.title} />
                                 ))}
+                                {gcalActive && gcalEventsOnDay(gcalEvents, day).length > 0 && (
+                                    <div className="w-full h-1 rounded-full" style={{ backgroundColor: GCAL_COLOR, opacity: 0.8 }} title={gt.title} />
+                                )}
                                 {dayTodos.length > 0 && (
                                     <div className="flex items-center justify-start gap-[2px] px-0.5">
                                         <div className="w-full h-[2px] rounded-full bg-primary/40" />
@@ -607,6 +669,13 @@ const KoCalendarPluginPanel = (props) => {
                         
                         return (
                             <>
+                                {gcalNeedsSetup && (
+                                    typeof window.api?.openSettings === 'function' ? (
+                                        <button onClick={openGcalSettings} className="text-[10px] text-left underline" style={{ color: GCAL_COLOR }}>{gcalState.state === 'reconnect-needed' ? gt.reconnect : gt.setup}</button>
+                                    ) : (
+                                        <span className="text-[10px] text-slate-400">{gcalState.state === 'reconnect-needed' ? gt.reconnect : gt.setup}</span>
+                                    )
+                                )}
                                 <div className="flex justify-between items-center pr-1">
                                     <span className="text-xs font-bold text-slate-200 uppercase tracking-widest">
                                         {selectedDayHasEvent ? `${format(selectedDate, 'MMM d')} - ${t('events') || 'Events'}` : (t('upcomingEvents') || 'Upcoming Events')}
@@ -619,6 +688,15 @@ const KoCalendarPluginPanel = (props) => {
                                     </button>
                                 </div>
                                 <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden custom-scrollbar h-[160px] animate-in fade-in slide-in-from-top-1 pr-1">
+                                    {gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map(gev => (
+                                        <div key={gev.id} title={gt.title} className="flex justify-between items-center text-sm rounded px-2 py-1.5 cursor-default select-none" style={{ backgroundColor: `color-mix(in srgb, ${GCAL_COLOR} 8%, transparent)` }}>
+                                            <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-3">
+                                                <span className="material-symbols-outlined text-[14px] shrink-0" style={{ color: GCAL_COLOR }}>event</span>
+                                                <span className="truncate text-slate-200">{gev.title}</span>
+                                            </div>
+                                            <span className="text-xs shrink-0" style={{ color: GCAL_COLOR }}>{gev.allDay ? gt.allDay : format(new Date(gev.start), 'HH:mm')}</span>
+                                        </div>
+                                    ))}
                                     {agendaData.slice(0, 8).map(ev => {
                                         const eventDate = parseISO(ev.startTime);
                                         const isEvToday = isSameDay(eventDate, new Date());

@@ -1,7 +1,7 @@
 {
   "id": "ko-calender-plugin",
   "name": "KoCalendar",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "An interactive, draggable calendar popup integrated natively into KoBar.",
   "author": "KoBar",
   "entry": "index.js",
@@ -24,7 +24,7 @@
     "ja",
     "hi"
   ],
-  "versionNote": "Updated plugin images.",
+  "versionNote": "Optional read-only Google Calendar layer (needs KoBar with Google Calendar (Experimental) enabled).",
   "image": "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/kocalender.png",
   "storeImage": [
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar1.png",
