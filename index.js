@@ -1767,6 +1767,9 @@
 .kocal-panel .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
 .kocal-panel .kocal-fill { font-variation-settings: 'FILL' 1, 'wght' 400; }
 .kocal-panel button { cursor: pointer; }
+.kocal-panel .kocal-ev-act { display: none; }
+.kocal-panel .kocal-ev:hover .kocal-ev-act, .kocal-panel .kocal-ev:focus-within .kocal-ev-act { display: flex; }
+.kocal-panel .kocal-ev:hover .kocal-ev-time, .kocal-panel .kocal-ev:focus-within .kocal-ev-time { display: none; }
 .kocal-panel .kocal-cell:focus-visible, .kocal-panel button:focus-visible { outline: 2px solid var(--kb-accent, #7c9cff); outline-offset: 2px; }
 `;
   const iconBtn = { width: 36, height: 36, borderRadius: 18, border: 0, background: T_INSET, color: T_FG1, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
@@ -1977,7 +1980,7 @@
     const orientation = useAppStore((state) => state.orientation);
     const getPopupStyle = () => {
       if (!anchorRect) return { display: "none" };
-      const popupHeight = 680;
+      const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
       const popupWidth = 480;
       const screenHeight = screenBounds?.height ?? 800;
       const screenWidth = screenBounds?.width ?? 1200;
@@ -1986,6 +1989,7 @@
       const style = {
         position: "absolute",
         width: popupWidth,
+        maxHeight: popupHeight,
         zIndex: 99999,
         backgroundColor: T_SHELL,
         border: "1px solid var(--kb-stroke-subtle, var(--theme-border))",
@@ -2049,7 +2053,7 @@
         if (!popupRef.current || !anchorRect || !isSmartRef.current) return;
         const newX = e.detail.x;
         const newY = e.detail.y;
-        const popupHeight = 680;
+        const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
         const popupWidth = 480;
         const screenXInViewport = (screenBounds?.x ?? 0) - window.screenX;
         const screenYInViewport = (screenBounds?.y ?? 0) - window.screenY;
@@ -2112,7 +2116,7 @@
         style: { ...getPopupStyle(), padding: 20 }
       },
       /* @__PURE__ */ window.React.createElement("style", null, ICON_CSS),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center drag-region", style: { gap: 12, marginBottom: 16 } }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24, color: T_ACCENT } }, "calendar_month")), /* @__PURE__ */ window.React.createElement("div", { className: "min-w-0 flex-1 no-drag-region", style: { display: "flex", flexDirection: "column", gap: 4 } }, /* @__PURE__ */ window.React.createElement(
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center drag-region", style: { gap: 12, marginBottom: 16, flex: "none" } }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24, color: T_ACCENT } }, "calendar_month")), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 no-drag-region", style: { display: "flex", flexDirection: "column", gap: 4, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement(
         "button",
         {
           type: "button",
@@ -2122,7 +2126,7 @@
           title: t("jumpToDate") || "Jump to Date",
           "aria-expanded": isPickerMode
         },
-        /* @__PURE__ */ window.React.createElement("span", { className: "truncate" }, t(`month_${currentDate.getMonth()}`), " ", currentDate.getFullYear()),
+        /* @__PURE__ */ window.React.createElement("span", null, t(`month_${currentDate.getMonth()}`), " ", currentDate.getFullYear()),
         /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20, color: T_FG2 } }, isPickerMode ? "arrow_drop_up" : "arrow_drop_down")
       ), /* @__PURE__ */ window.React.createElement("div", { className: "flex", style: { gap: 8 } }, ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"].map((color) => /* @__PURE__ */ window.React.createElement(
         "button",
@@ -2135,7 +2139,7 @@
           style: { width: 12, height: 12, borderRadius: 6, border: 0, padding: 0, backgroundColor: color, opacity: koCalendarColor === color ? 1 : 0.45, boxShadow: koCalendarColor === color ? "0 0 0 2px " + T_SHELL + ", 0 0 0 3.5px " + T_FG2 : "none" }
         }
       )))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center shrink-0 no-drag-region" }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => onClose(), style: iconBtn, "aria-label": t("close") || "Close" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "close")))),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center no-drag-region", style: { gap: 6, marginBottom: 16 } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handlePrevMonth, style: iconBtn, "aria-label": "‹" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_left")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleNextMonth, style: iconBtn, "aria-label": "›" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_right")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleToday, style: { height: 32, padding: "0 14px", borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 } }, t("today")), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => fileInputRef.current?.click(), style: iconBtn, title: t("importHolidays") || "Import Holidays", "aria-label": t("importHolidays") || "Import Holidays" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "download")), /* @__PURE__ */ window.React.createElement(
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center no-drag-region", style: { gap: 6, marginBottom: 16, flex: "none" } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handlePrevMonth, style: iconBtn, "aria-label": "‹" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_left")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleNextMonth, style: iconBtn, "aria-label": "›" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_right")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleToday, style: { height: 32, padding: "0 14px", borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 } }, t("today")), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => fileInputRef.current?.click(), style: iconBtn, title: t("importHolidays") || "Import Holidays", "aria-label": t("importHolidays") || "Import Holidays" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "download")), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "file",
@@ -2145,7 +2149,7 @@
           style: { display: "none" }
         }
       )),
-      isPickerMode ? /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-4 flex-1", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, /* @__PURE__ */ window.React.createElement("style", null, `
+      /* @__PURE__ */ window.React.createElement("div", { className: "kocal-body custom-scrollbar flex flex-col flex-1", style: { minHeight: 0, overflowY: "auto", overflowX: "hidden" } }, isPickerMode ? /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-4 flex-1", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, /* @__PURE__ */ window.React.createElement("style", null, `
                         .hide-number-arrows::-webkit-outer-spin-button,
                         .hide-number-arrows::-webkit-inner-spin-button {
                             -webkit-appearance: none;
@@ -2197,12 +2201,13 @@
               setEditingEventDate(day);
               setNewEventColor(koCalendarColor);
             },
-            className: "kocal-cell flex flex-col h-[62px] p-1.5 relative cursor-pointer group",
+            "aria-pressed": isSelected,
+            className: "kocal-cell flex flex-col h-[56px] p-1.5 relative cursor-pointer group",
             style: {
               borderRadius: 12,
-              background: isWeekend ? T_TILE : T_SURFACE,
+              background: isSelected ? T_CONTAINER : isWeekend ? T_TILE : T_SURFACE,
               opacity: isCurrentMonth ? 1 : 0.35,
-              boxShadow: isSelected ? "inset 0 0 0 2px " + koCalendarColor : editingEventDate && isSameDay(day, editingEventDate) ? "inset 0 0 0 2px " + T_ACCENT : "none",
+              boxShadow: editingEventDate && isSameDay(day, editingEventDate) ? "inset 0 0 0 2px " + T_ACCENT : "none",
               overflow: "hidden"
             }
           },
@@ -2218,7 +2223,7 @@
                 fontWeight: 600,
                 fontVariantNumeric: "tabular-nums",
                 background: isToday ? T_ACCENT : "transparent",
-                color: isToday ? T_ON_ACCENT : isCurrentMonth ? T_FG1 : T_FG3
+                color: isToday ? T_ON_ACCENT : isSelected ? T_ON_CONTAINER : isCurrentMonth ? T_FG1 : T_FG3
               }
             },
             format(day, "d")
@@ -2337,7 +2342,7 @@
           className: "no-drag-region",
           style: { ...inputStyle, paddingLeft: 34 }
         }
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-50" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "link")))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1", style: { background: T_INSET, borderRadius: 16, padding: 6 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] text-slate-500 ml-1" }, "schedule"), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center" }, /* @__PURE__ */ window.React.createElement(
+      ), /* @__PURE__ */ window.React.createElement("div", { className: "absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-50" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "link")))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1", style: { background: T_INSET, borderRadius: 16, padding: 6 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] ml-1", style: { color: T_FG3 } }, "schedule"), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center" }, /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "text",
@@ -2348,9 +2353,10 @@
             if (parseInt(v) < 24 || v === "") setNewEventHours(v);
           },
           onBlur: () => setNewEventHours((prev) => prev.padStart(2, "0")),
-          className: "w-6 bg-transparent text-center text-xs text-white outline-none font-bold"
+          className: "w-6 bg-transparent text-center text-xs outline-none font-bold",
+          style: { color: T_FG1 }
         }
-      ), /* @__PURE__ */ window.React.createElement("span", { className: "text-slate-600" }, ":"), /* @__PURE__ */ window.React.createElement(
+      ), /* @__PURE__ */ window.React.createElement("span", { style: { color: T_FG3 } }, ":"), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "text",
@@ -2361,7 +2367,8 @@
             if (parseInt(v) < 60 || v === "") setNewEventMinutes(v);
           },
           onBlur: () => setNewEventMinutes((prev) => prev.padStart(2, "0")),
-          className: "w-6 bg-transparent text-center text-xs text-white outline-none font-bold"
+          className: "w-6 bg-transparent text-center text-xs outline-none font-bold",
+          style: { color: T_FG1 }
         }
       ))), /* @__PURE__ */ window.React.createElement(
         "button",
@@ -2388,10 +2395,10 @@
         targetStartOfDay.setHours(0, 0, 0, 0);
         const agendaData = localEvents.filter((e) => e.startTime && new Date(e.startTime) >= targetStartOfDay).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
         const selectedDayHasEvent = agendaData.length > 0 && isSameDay(parseISO(agendaData[0].startTime), selectedDate);
-        return /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, gcalNeedsSetup && (typeof window.api?.openSettings === "function" ? /* @__PURE__ */ window.React.createElement("button", { onClick: openGcalSettings, className: "text-[10px] text-left underline", style: { color: GCAL_COLOR } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup) : /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px] text-slate-400" }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup)), /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center pr-1" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 13, fontWeight: 600, color: T_FG2 } }, selectedDayHasEvent ? `${format(selectedDate, "MMM d")} - ${t("events") || "Events"}` : t("upcomingEvents") || "Upcoming Events"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
+        return /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, gcalNeedsSetup && (typeof window.api?.openSettings === "function" ? /* @__PURE__ */ window.React.createElement("button", { onClick: openGcalSettings, className: "text-[10px] text-left underline", style: { color: GCAL_COLOR } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup) : /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px]", style: { color: T_FG2 } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup)), /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center pr-1" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 13, fontWeight: 600, color: T_FG2 } }, selectedDayHasEvent ? `${format(selectedDate, "MMM d")} - ${t("events") || "Events"}` : t("upcomingEvents") || "Upcoming Events"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
           setEditingEventDate(selectedDate);
           setNewEventColor(koCalendarColor);
-        }, className: "flex items-center justify-center relative z-20", style: { width: 32, height: 32, borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER }, "aria-label": t("addEvent") || "Add Event" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-1 overflow-y-auto overflow-x-hidden custom-scrollbar h-[160px] animate-in fade-in slide-in-from-top-1 pr-1" }, gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map((gev) => /* @__PURE__ */ window.React.createElement("div", { key: gev.id, title: gt.title, className: "flex justify-between items-center text-sm px-3 py-2 cursor-default select-none", style: { borderRadius: 16, backgroundColor: T_TILE } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] shrink-0", style: { color: GCAL_COLOR } }, "event"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1 } }, gev.title)), /* @__PURE__ */ window.React.createElement("span", { className: "text-xs shrink-0", style: { color: GCAL_COLOR } }, gev.allDay ? gt.allDay : format(new Date(gev.start), "HH:mm")))), agendaData.slice(0, 8).map((ev) => {
+        }, className: "flex items-center justify-center relative z-20", style: { width: 32, height: 32, borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER }, "aria-label": t("addEvent") || "Add Event" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar pr-1", style: { maxHeight: 200 } }, gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map((gev) => /* @__PURE__ */ window.React.createElement("div", { key: gev.id, title: gt.title, className: "flex justify-between items-center text-sm px-3 py-2 cursor-default select-none", style: { borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] shrink-0", style: { color: GCAL_COLOR } }, "event"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1 } }, gev.title)), /* @__PURE__ */ window.React.createElement("span", { className: "text-xs shrink-0", style: { color: GCAL_COLOR } }, gev.allDay ? gt.allDay : format(new Date(gev.start), "HH:mm")))), agendaData.slice(0, 8).map((ev) => {
           const eventDate = parseISO(ev.startTime);
           const isEvToday = isSameDay(eventDate, /* @__PURE__ */ new Date());
           const isEvSelected = isSameDay(eventDate, selectedDate);
@@ -2403,14 +2410,14 @@
                 setSelectedDate(eventDate);
                 setCurrentDate(eventDate);
               },
-              className: "flex justify-between items-center text-sm group/event px-3 py-2 cursor-pointer",
-              style: { borderRadius: 16, backgroundColor: T_TILE }
+              className: "kocal-ev flex justify-between items-center text-sm px-3 py-2 cursor-pointer",
+              style: { borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 }
             },
-            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-start gap-2.5 flex-1 min-w-0 mr-3 mt-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0 mt-1", style: { width: 8, height: 8, borderRadius: 4, backgroundColor: isEvSelected ? ev.colorId || koCalendarColor : isEvToday ? T_ACCENT : T_FG3 } }), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col min-w-0 flex-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1, fontWeight: isEvSelected ? "600" : "400" } }, ev.title), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
+            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0", style: { width: 8, height: 8, borderRadius: 4, backgroundColor: isEvSelected ? ev.colorId || koCalendarColor : isEvToday ? T_ACCENT : T_FG3 } }), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col min-w-0 flex-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1, fontWeight: isEvSelected ? "600" : "400" } }, ev.title), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
               e.stopPropagation();
               window.api?.openExternal?.(ev.meetingLink);
-            }, className: "text-blue-400 hover:text-blue-300 ml-1 shrink-0 bg-blue-400/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors", title: t("joinMeeting") || "Join Meeting" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "videocam")), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-xs text-primary/50 shrink-0" }, "notifications_active")), ev.description && /* @__PURE__ */ window.React.createElement("span", { className: "text-[11px] truncate mt-0.5", style: { color: T_FG2 }, title: ev.description }, ev.description))),
-            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs group-hover/event:hidden", style: { color: T_FG2, fontVariantNumeric: "tabular-nums" } }, isEvSelected ? format(eventDate, "HH:mm") : format(eventDate, "MMM d")), /* @__PURE__ */ window.React.createElement(
+            }, className: "ml-1 shrink-0 rounded-full w-5 h-5 flex items-center justify-center transition-colors", style: { background: T_CONTAINER, color: T_ON_CONTAINER }, title: t("joinMeeting") || "Join Meeting" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "videocam")), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-xs shrink-0", style: { color: T_FG3 } }, "notifications_active")), ev.description && /* @__PURE__ */ window.React.createElement("span", { className: "text-[11px] truncate mt-0.5", style: { color: T_FG2 }, title: ev.description }, ev.description))),
+            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ window.React.createElement("span", { className: "kocal-ev-time text-xs", style: { color: T_FG2, fontVariantNumeric: "tabular-nums" } }, isEvSelected ? format(eventDate, "HH:mm") : format(eventDate, "MMM d")), /* @__PURE__ */ window.React.createElement(
               "button",
               {
                 onClick: (e) => {
@@ -2426,9 +2433,11 @@
                   setNewEventNotification(!!ev.notificationEnabled);
                   setNewEventColor(ev.colorId || koCalendarColor);
                 },
-                className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-blue-400 hover:text-blue-300 bg-blue-400/10 rounded"
+                "aria-label": t("editEvent") || "Edit Event",
+                className: "kocal-ev-act w-6 h-6 items-center justify-center rounded-full",
+                style: { background: T_CONTAINER, color: T_ON_CONTAINER }
               },
-              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "edit")
+              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "edit")
             ), /* @__PURE__ */ window.React.createElement(
               "button",
               {
@@ -2436,13 +2445,15 @@
                   e.stopPropagation();
                   deleteCalendarEvent(ev.id);
                 },
-                className: "hidden group-hover/event:flex w-4 h-4 items-center justify-center text-red-400 hover:text-red-300 bg-red-400/10 rounded"
+                "aria-label": t("delete") || "Delete",
+                className: "kocal-ev-act w-6 h-6 items-center justify-center rounded-full",
+                style: { background: T_INSET, color: "var(--kb-danger, #f87171)" }
               },
-              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "delete")
+              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "delete")
             ))
           );
-        }), agendaData.length === 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col items-center justify-center h-full opacity-30 mt-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-[11px]", style: { color: T_FG3 } }, t("noEventsFound") || "No events found"))));
-      })()))
+        }), agendaData.length === 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col items-center text-center", style: { border: "2px dashed var(--kb-stroke-subtle, var(--theme-border, rgba(255,255,255,.1)))", borderRadius: 28, padding: "20px 16px", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-center", style: { width: 48, height: 48, borderRadius: 16, background: T_CONTAINER, color: T_ACCENT } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24 } }, "event_available")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: T_FG1 } }, t("noEventsFound") || "No events found"))));
+      })())))
     );
   };
   window.KoBarExtensions.registerPanel("ko-calender-plugin-panel", {

@@ -48,6 +48,9 @@ const ICON_CSS = `
 .kocal-panel .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
 .kocal-panel .kocal-fill { font-variation-settings: 'FILL' 1, 'wght' 400; }
 .kocal-panel button { cursor: pointer; }
+.kocal-panel .kocal-ev-act { display: none; }
+.kocal-panel .kocal-ev:hover .kocal-ev-act, .kocal-panel .kocal-ev:focus-within .kocal-ev-act { display: flex; }
+.kocal-panel .kocal-ev:hover .kocal-ev-time, .kocal-panel .kocal-ev:focus-within .kocal-ev-time { display: none; }
 .kocal-panel .kocal-cell:focus-visible, .kocal-panel button:focus-visible { outline: 2px solid var(--kb-accent, #7c9cff); outline-offset: 2px; }
 `;
 const iconBtn = { width: 36, height: 36, borderRadius: 18, border: 0, background: T_INSET, color: T_FG1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 };
@@ -247,7 +250,7 @@ const KoCalendarPluginPanel = (props) => {
     const getPopupStyle = () => {
         if (!anchorRect) return { display: 'none' };
         
-        const popupHeight = 680;
+        const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
         const popupWidth = 480;
         const screenHeight = screenBounds?.height ?? 800;
         const screenWidth = screenBounds?.width ?? 1200;
@@ -257,6 +260,7 @@ const KoCalendarPluginPanel = (props) => {
         const style = {
             position: 'absolute',
             width: popupWidth,
+            maxHeight: popupHeight,
             zIndex: 99999,
             backgroundColor: T_SHELL,
             border: '1px solid var(--kb-stroke-subtle, var(--theme-border))',
@@ -326,7 +330,7 @@ const KoCalendarPluginPanel = (props) => {
             if (!popupRef.current || !anchorRect || !isSmartRef.current) return;
             const newX = e.detail.x;
             const newY = e.detail.y;
-            const popupHeight = 680;
+            const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
             const popupWidth = 480;
 
             const screenXInViewport = (screenBounds?.x ?? 0) - window.screenX;
@@ -396,11 +400,11 @@ const KoCalendarPluginPanel = (props) => {
             style={{ ...getPopupStyle(), padding: 20 }}
         >
             <style>{ICON_CSS}</style>
-            <div className="flex items-center drag-region" style={{ gap: 12, marginBottom: 16 }}>
+            <div className="flex items-center drag-region" style={{ gap: 12, marginBottom: 16, flex: 'none' }}>
                 <div style={{ width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <span className="material-symbols-outlined kocal-fill" style={{ fontSize: 24, color: T_ACCENT }}>calendar_month</span>
                 </div>
-                <div className="min-w-0 flex-1 no-drag-region" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div className="flex-1 no-drag-region" style={{ display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 }}>
                     <button
                         type="button"
                         onClick={() => setIsPickerMode(!isPickerMode)}
@@ -409,7 +413,7 @@ const KoCalendarPluginPanel = (props) => {
                         title={t('jumpToDate') || "Jump to Date"}
                         aria-expanded={isPickerMode}
                     >
-                        <span className="truncate">{t(`month_${currentDate.getMonth()}`)} {currentDate.getFullYear()}</span>
+                        <span>{t(`month_${currentDate.getMonth()}`)} {currentDate.getFullYear()}</span>
                         <span className="material-symbols-outlined" style={{ fontSize: 20, color: T_FG2 }}>
                             {isPickerMode ? 'arrow_drop_up' : 'arrow_drop_down'}
                         </span>
@@ -433,7 +437,7 @@ const KoCalendarPluginPanel = (props) => {
                     </button>
                 </div>
             </div>
-            <div className="flex items-center no-drag-region" style={{ gap: 6, marginBottom: 16 }}>
+            <div className="flex items-center no-drag-region" style={{ gap: 6, marginBottom: 16, flex: 'none' }}>
                 <button type="button" onClick={handlePrevMonth} style={iconBtn} aria-label="‹">
                     <span className="material-symbols-outlined" style={{ fontSize: 22 }}>chevron_left</span>
                 </button>
@@ -454,6 +458,7 @@ const KoCalendarPluginPanel = (props) => {
                 />
             </div>
 
+            <div className="kocal-body custom-scrollbar flex flex-col flex-1" style={{ minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
             {isPickerMode ? (
                 <div className="flex flex-col gap-4 flex-1" style={{ background: T_SURFACE, borderRadius: 24, padding: 16 }}>
                     <style>{`
@@ -529,12 +534,12 @@ const KoCalendarPluginPanel = (props) => {
                                 setEditingEventDate(day);
                                 setNewEventColor(koCalendarColor);
                             }}
-                            className="kocal-cell flex flex-col h-[62px] p-1.5 relative cursor-pointer group"
+                            aria-pressed={isSelected} className="kocal-cell flex flex-col h-[56px] p-1.5 relative cursor-pointer group"
                             style={{
                                 borderRadius: 12,
-                                background: isWeekend ? T_TILE : T_SURFACE,
+                                background: isSelected ? T_CONTAINER : (isWeekend ? T_TILE : T_SURFACE),
                                 opacity: isCurrentMonth ? 1 : 0.35,
-                                boxShadow: isSelected ? 'inset 0 0 0 2px ' + koCalendarColor : (editingEventDate && isSameDay(day, editingEventDate) ? 'inset 0 0 0 2px ' + T_ACCENT : 'none'),
+                                boxShadow: (editingEventDate && isSameDay(day, editingEventDate)) ? 'inset 0 0 0 2px ' + T_ACCENT : 'none',
                                 overflow: 'hidden'
                             }}
                         >
@@ -544,7 +549,7 @@ const KoCalendarPluginPanel = (props) => {
                                     style={{
                                         width: 26, height: 26, borderRadius: 13, fontSize: 13, fontWeight: 600, fontVariantNumeric: 'tabular-nums',
                                         background: isToday ? T_ACCENT : 'transparent',
-                                        color: isToday ? T_ON_ACCENT : (isCurrentMonth ? T_FG1 : T_FG3)
+                                        color: isToday ? T_ON_ACCENT : (isSelected ? T_ON_CONTAINER : (isCurrentMonth ? T_FG1 : T_FG3))
                                     }}
                                 >
                                     {format(day, 'd')}
@@ -715,7 +720,7 @@ const KoCalendarPluginPanel = (props) => {
                         
                         <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1" style={{ background: T_INSET, borderRadius: 16, padding: 6 }}>
-                                <span className="material-symbols-outlined text-[14px] text-slate-500 ml-1">schedule</span>
+                                <span className="material-symbols-outlined text-[14px] ml-1" style={{ color: T_FG3 }}>schedule</span>
                                 <div className="flex items-center">
                                     <input 
                                         type="text" 
@@ -726,9 +731,9 @@ const KoCalendarPluginPanel = (props) => {
                                             if (parseInt(v) < 24 || v === '') setNewEventHours(v);
                                         }}
                                         onBlur={() => setNewEventHours(prev => prev.padStart(2, '0'))}
-                                        className="w-6 bg-transparent text-center text-xs text-white outline-none font-bold"
+                                        className="w-6 bg-transparent text-center text-xs outline-none font-bold" style={{ color: T_FG1 }}
                                     />
-                                    <span className="text-slate-600">:</span>
+                                    <span style={{ color: T_FG3 }}>:</span>
                                     <input 
                                         type="text" 
                                         maxLength={2}
@@ -738,7 +743,7 @@ const KoCalendarPluginPanel = (props) => {
                                             if (parseInt(v) < 60 || v === '') setNewEventMinutes(v);
                                         }}
                                         onBlur={() => setNewEventMinutes(prev => prev.padStart(2, '0'))}
-                                        className="w-6 bg-transparent text-center text-xs text-white outline-none font-bold"
+                                        className="w-6 bg-transparent text-center text-xs outline-none font-bold" style={{ color: T_FG1 }}
                                     />
                                 </div>
                             </div>
@@ -792,7 +797,7 @@ const KoCalendarPluginPanel = (props) => {
                                     typeof window.api?.openSettings === 'function' ? (
                                         <button onClick={openGcalSettings} className="text-[10px] text-left underline" style={{ color: GCAL_COLOR }}>{gcalState.state === 'reconnect-needed' ? gt.reconnect : gt.setup}</button>
                                     ) : (
-                                        <span className="text-[10px] text-slate-400">{gcalState.state === 'reconnect-needed' ? gt.reconnect : gt.setup}</span>
+                                        <span className="text-[10px]" style={{ color: T_FG2 }}>{gcalState.state === 'reconnect-needed' ? gt.reconnect : gt.setup}</span>
                                     )
                                 )}
                                 <div className="flex justify-between items-center pr-1">
@@ -806,9 +811,9 @@ const KoCalendarPluginPanel = (props) => {
                                         <span className="material-symbols-outlined text-[18px]">add</span>
                                     </button>
                                 </div>
-                                <div className="flex flex-col gap-1 overflow-y-auto overflow-x-hidden custom-scrollbar h-[160px] animate-in fade-in slide-in-from-top-1 pr-1">
+                                <div className="flex flex-col gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar pr-1" style={{ maxHeight: 200 }}>
                                     {gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map(gev => (
-                                        <div key={gev.id} title={gt.title} className="flex justify-between items-center text-sm px-3 py-2 cursor-default select-none" style={{ borderRadius: 16, backgroundColor: T_TILE }}>
+                                        <div key={gev.id} title={gt.title} className="flex justify-between items-center text-sm px-3 py-2 cursor-default select-none" style={{ borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 }}>
                                             <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-3">
                                                 <span className="material-symbols-outlined text-[14px] shrink-0" style={{ color: GCAL_COLOR }}>event</span>
                                                 <span className="truncate" style={{ color: T_FG1 }}>{gev.title}</span>
@@ -828,21 +833,21 @@ const KoCalendarPluginPanel = (props) => {
                                                     setSelectedDate(eventDate);
                                                     setCurrentDate(eventDate);
                                                 }}
-                                                className="flex justify-between items-center text-sm group/event px-3 py-2 cursor-pointer"
-                                                style={{ borderRadius: 16, backgroundColor: T_TILE }}
+                                                className="kocal-ev flex justify-between items-center text-sm px-3 py-2 cursor-pointer"
+                                                style={{ borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 }}
                                             >
-                                                <div className="flex items-start gap-2.5 flex-1 min-w-0 mr-3 mt-1">
-                                                    <div className="shrink-0 mt-1" style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isEvSelected ? (ev.colorId || koCalendarColor) : isEvToday ? T_ACCENT : T_FG3 }} />
+                                                <div className="flex items-center gap-2.5 flex-1 min-w-0 mr-3">
+                                                    <div className="shrink-0" style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: isEvSelected ? (ev.colorId || koCalendarColor) : isEvToday ? T_ACCENT : T_FG3 }} />
                                                     <div className="flex flex-col min-w-0 flex-1">
                                                         <div className="flex items-center gap-1">
                                                             <span className="truncate" style={{ color: T_FG1, fontWeight: isEvSelected ? '600' : '400' }}>{ev.title}</span>
                                                             {ev.meetingLink && (
-                                                                <button onClick={(e) => { e.stopPropagation(); window.api?.openExternal?.(ev.meetingLink); }} className="text-blue-400 hover:text-blue-300 ml-1 shrink-0 bg-blue-400/10 rounded-full w-5 h-5 flex items-center justify-center transition-colors" title={t('joinMeeting') || 'Join Meeting'}>
+                                                                <button onClick={(e) => { e.stopPropagation(); window.api?.openExternal?.(ev.meetingLink); }} className="ml-1 shrink-0 rounded-full w-5 h-5 flex items-center justify-center transition-colors" style={{ background: T_CONTAINER, color: T_ON_CONTAINER }} title={t('joinMeeting') || 'Join Meeting'}>
                                                                     <span className="material-symbols-outlined text-[12px]">videocam</span>
                                                                 </button>
                                                             )}
                                                             {ev.notificationEnabled && (
-                                                                <span className="material-symbols-outlined text-xs text-primary/50 shrink-0">notifications_active</span>
+                                                                <span className="material-symbols-outlined text-xs shrink-0" style={{ color: T_FG3 }}>notifications_active</span>
                                                             )}
                                                         </div>
                                                         {ev.description && (
@@ -851,7 +856,7 @@ const KoCalendarPluginPanel = (props) => {
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2 shrink-0">
-                                                    <span className="text-xs group-hover/event:hidden" style={{ color: T_FG2, fontVariantNumeric: 'tabular-nums' }}>
+                                                    <span className="kocal-ev-time text-xs" style={{ color: T_FG2, fontVariantNumeric: 'tabular-nums' }}>
                                                         {isEvSelected ? format(eventDate, 'HH:mm') : format(eventDate, 'MMM d')}
                                                     </span>
                                                     <button 
@@ -868,26 +873,29 @@ const KoCalendarPluginPanel = (props) => {
                                                             setNewEventNotification(!!ev.notificationEnabled);
                                                             setNewEventColor(ev.colorId || koCalendarColor);
                                                         }}
-                                                        className="hidden group-hover/event:flex w-4 h-4 items-center justify-center text-blue-400 hover:text-blue-300 bg-blue-400/10 rounded"
+                                                        aria-label={t('editEvent') || 'Edit Event'} className="kocal-ev-act w-6 h-6 items-center justify-center rounded-full" style={{ background: T_CONTAINER, color: T_ON_CONTAINER }}
                                                     >
-                                                        <span className="material-symbols-outlined text-[12px]">edit</span>
+                                                        <span className="material-symbols-outlined text-[14px]">edit</span>
                                                     </button>
                                                     <button 
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             deleteCalendarEvent(ev.id);
                                                         }}
-                                                        className="hidden group-hover/event:flex w-4 h-4 items-center justify-center text-red-400 hover:text-red-300 bg-red-400/10 rounded"
+                                                        aria-label={t('delete') || 'Delete'} className="kocal-ev-act w-6 h-6 items-center justify-center rounded-full" style={{ background: T_INSET, color: 'var(--kb-danger, #f87171)' }}
                                                     >
-                                                        <span className="material-symbols-outlined text-[12px]">delete</span>
+                                                        <span className="material-symbols-outlined text-[14px]">delete</span>
                                                     </button>
                                                 </div>
                                             </div>
                                         );
                                     })}
                                     {agendaData.length === 0 && (
-                                        <div className="flex flex-col items-center justify-center h-full opacity-30 mt-1">
-                                           <span className="text-[11px]" style={{ color: T_FG3 }}>{t('noEventsFound') || 'No events found'}</span>
+                                        <div className="flex flex-col items-center text-center" style={{ border: '2px dashed var(--kb-stroke-subtle, var(--theme-border, rgba(255,255,255,.1)))', borderRadius: 28, padding: '20px 16px', gap: 8 }}>
+                                            <div className="flex items-center justify-center" style={{ width: 48, height: 48, borderRadius: 16, background: T_CONTAINER, color: T_ACCENT }}>
+                                                <span className="material-symbols-outlined kocal-fill" style={{ fontSize: 24 }}>event_available</span>
+                                            </div>
+                                            <span style={{ fontSize: 14, fontWeight: 600, color: T_FG1 }}>{t('noEventsFound') || 'No events found'}</span>
                                         </div>
                                     )}
                                 </div>
@@ -898,6 +906,7 @@ const KoCalendarPluginPanel = (props) => {
             )}
             </>
             )}
+            </div>
         </div>
     );
 };
