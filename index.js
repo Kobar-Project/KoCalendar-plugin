@@ -1728,7 +1728,15 @@
   const gcalSupported = () => typeof window !== "undefined" && window.api && typeof window.api.gcalListEvents === "function";
   const GCAL_TEXT = {
     en: { setup: "Google Calendar: set up in Settings > Integrations", reconnect: "Google Calendar: reconnect in Settings > Integrations", title: "Google Calendar (read-only)", allDay: "All day" },
-    tr: { setup: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden kurun", reconnect: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden yeniden bağlanın", title: "Google Takvim (salt okunur)", allDay: "Tüm gün" }
+    tr: { setup: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden kurun", reconnect: "Google Takvim: Ayarlar > Entegrasyonlar bölümünden yeniden bağlanın", title: "Google Takvim (salt okunur)", allDay: "Tüm gün" },
+    de: { setup: "Google Kalender: in Einstellungen > Integrationen einrichten", reconnect: "Google Kalender: in Einstellungen > Integrationen neu verbinden", title: "Google Kalender (nur Lesen)", allDay: "Ganztägig" },
+    fr: { setup: "Google Agenda : à configurer dans Paramètres > Intégrations", reconnect: "Google Agenda : à reconnecter dans Paramètres > Intégrations", title: "Google Agenda (lecture seule)", allDay: "Toute la journée" },
+    es: { setup: "Google Calendar: configúralo en Ajustes > Integraciones", reconnect: "Google Calendar: vuelve a conectarlo en Ajustes > Integraciones", title: "Google Calendar (solo lectura)", allDay: "Todo el día" },
+    zh: { setup: "Google 日历：请在“设置 > 集成”中设置", reconnect: "Google 日历：请在“设置 > 集成”中重新连接", title: "Google 日历（只读）", allDay: "全天" },
+    ja: { setup: "Google カレンダー: 設定 > 連携 で設定してください", reconnect: "Google カレンダー: 設定 > 連携 で再接続してください", title: "Google カレンダー（読み取り専用）", allDay: "終日" },
+    ru: { setup: "Google Календарь: настройте в Настройки > Интеграции", reconnect: "Google Календарь: подключите заново в Настройки > Интеграции", title: "Google Календарь (только чтение)", allDay: "Весь день" },
+    ar: { setup: "تقويم Google: قم بالإعداد من الإعدادات > التكاملات", reconnect: "تقويم Google: أعد الاتصال من الإعدادات > التكاملات", title: "تقويم Google (للقراءة فقط)", allDay: "طوال اليوم" },
+    hi: { setup: "Google कैलेंडर: सेटिंग्स > इंटीग्रेशन में सेट करें", reconnect: "Google कैलेंडर: सेटिंग्स > इंटीग्रेशन में फिर से कनेक्ट करें", title: "Google कैलेंडर (केवल पढ़ने के लिए)", allDay: "पूरे दिन" }
   };
   const gcalDayKey = (d) => format(d, "yyyy-MM-dd");
   const gcalEventsOnDay = (events, day) => {
@@ -1763,15 +1771,6 @@
   const T_FG2 = "var(--kb-fg-2, #aab)";
   const T_FG3 = "var(--kb-fg-3, #778)";
   const T_DISPLAY = "var(--kb-font-display, inherit)";
-  const ICON_CSS = `
-.kocal-panel .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
-.kocal-panel .kocal-fill { font-variation-settings: 'FILL' 1, 'wght' 400; }
-.kocal-panel button { cursor: pointer; }
-.kocal-panel .kocal-ev-act { display: none; }
-.kocal-panel .kocal-ev:hover .kocal-ev-act, .kocal-panel .kocal-ev:focus-within .kocal-ev-act { display: flex; }
-.kocal-panel .kocal-ev:hover .kocal-ev-time, .kocal-panel .kocal-ev:focus-within .kocal-ev-time { display: none; }
-.kocal-panel .kocal-cell:focus-visible, .kocal-panel button:focus-visible { outline: 2px solid var(--kb-accent, #7c9cff); outline-offset: 2px; }
-`;
   const iconBtn = { width: 36, height: 36, borderRadius: 18, border: 0, background: T_INSET, color: T_FG1, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 };
   const pillFilled = { height: 40, padding: "0 20px", borderRadius: 20, border: 0, background: T_ACCENT, color: T_ON_ACCENT, fontWeight: 600, fontSize: 14 };
   const inputStyle = { width: "100%", background: T_INSET, border: 0, borderRadius: 16, padding: "10px 14px", color: T_FG1, fontSize: 13, outline: "none" };
@@ -1861,17 +1860,58 @@
     }
   } catch {
   }
+  const KC_KEYS = ["today", "jump", "importHolidays", "close", "edit", "add", "evTitle", "evDesc", "evLink", "alertOn", "alertOff", "save", "update", "cancel", "upcoming", "join", "del", "nothing", "more", "defColor", "prev", "next", "dueTasks", "found", "importN", "colorLabel", "monthYear", "year"];
+  const KC_VALUES = {
+    en: ["Today", "Jump to date", "Import holidays", "Close", "Edit event", "Add event", "Event title", "Description (optional)", "Meeting link (optional)", "Alert on", "No alert", "Save", "Update", "Cancel", "Upcoming", "Join meeting", "Delete", "Nothing planned", "More", "Default colour", "Previous month", "Next month", "Tasks due", "{n} holidays found. Pick a colour for them.", "Import {n} holidays", "Colour", "Pick month and year", "Year"],
+    tr: ["Bugün", "Tarihe git", "Tatilleri içe aktar", "Kapat", "Etkinliği düzenle", "Etkinlik ekle", "Etkinlik başlığı", "Açıklama (isteğe bağlı)", "Toplantı bağlantısı (isteğe bağlı)", "Uyarı açık", "Uyarı yok", "Kaydet", "Güncelle", "Vazgeç", "Yaklaşan", "Toplantıya katıl", "Sil", "Planlanmış bir şey yok", "Daha fazla", "Varsayılan renk", "Önceki ay", "Sonraki ay", "Son tarihi olan görevler", "{n} tatil bulundu. Bunlar için bir renk seçin.", "{n} tatili içe aktar", "Renk", "Ay ve yıl seç", "Yıl"],
+    de: ["Heute", "Zum Datum springen", "Feiertage importieren", "Schließen", "Termin bearbeiten", "Termin hinzufügen", "Titel des Termins", "Beschreibung (optional)", "Meeting-Link (optional)", "Erinnerung an", "Keine Erinnerung", "Speichern", "Aktualisieren", "Abbrechen", "Demnächst", "Meeting beitreten", "Löschen", "Nichts geplant", "Mehr", "Standardfarbe", "Voriger Monat", "Nächster Monat", "Fällige Aufgaben", "{n} Feiertage gefunden. Wähle eine Farbe dafür.", "{n} Feiertage importieren", "Farbe", "Monat und Jahr wählen", "Jahr"],
+    fr: ["Aujourd’hui", "Aller à une date", "Importer des jours fériés", "Fermer", "Modifier l’événement", "Ajouter un événement", "Titre de l’événement", "Description (facultatif)", "Lien de réunion (facultatif)", "Alerte activée", "Pas d’alerte", "Enregistrer", "Mettre à jour", "Annuler", "À venir", "Rejoindre la réunion", "Supprimer", "Rien de prévu", "Plus", "Couleur par défaut", "Mois précédent", "Mois suivant", "Tâches à échéance", "{n} jours fériés trouvés. Choisissez une couleur.", "Importer {n} jours fériés", "Couleur", "Choisir le mois et l’année", "Année"],
+    es: ["Hoy", "Ir a una fecha", "Importar festivos", "Cerrar", "Editar evento", "Añadir evento", "Título del evento", "Descripción (opcional)", "Enlace de reunión (opcional)", "Aviso activado", "Sin aviso", "Guardar", "Actualizar", "Cancelar", "Próximos", "Unirse a la reunión", "Eliminar", "Nada planeado", "Más", "Color predeterminado", "Mes anterior", "Mes siguiente", "Tareas con fecha", "Se encontraron {n} festivos. Elige un color.", "Importar {n} festivos", "Color", "Elegir mes y año", "Año"],
+    zh: ["今天", "跳转到日期", "导入节假日", "关闭", "编辑活动", "添加活动", "活动标题", "说明（可选）", "会议链接（可选）", "提醒已开启", "无提醒", "保存", "更新", "取消", "即将到来", "加入会议", "删除", "暂无安排", "更多", "默认颜色", "上个月", "下个月", "到期任务", "找到 {n} 个节假日。请为它们选择颜色。", "导入 {n} 个节假日", "颜色", "选择月份和年份", "年份"],
+    ja: ["今日", "日付へ移動", "祝日をインポート", "閉じる", "予定を編集", "予定を追加", "予定のタイトル", "説明（任意）", "会議リンク（任意）", "通知オン", "通知なし", "保存", "更新", "キャンセル", "今後の予定", "会議に参加", "削除", "予定はありません", "その他", "既定の色", "前の月", "次の月", "期限のあるタスク", "{n} 件の祝日が見つかりました。色を選んでください。", "{n} 件の祝日をインポート", "色", "月と年を選択", "年"],
+    ru: ["Сегодня", "Перейти к дате", "Импортировать праздники", "Закрыть", "Изменить событие", "Добавить событие", "Название события", "Описание (необязательно)", "Ссылка на встречу (необязательно)", "Напоминание включено", "Без напоминания", "Сохранить", "Обновить", "Отмена", "Скоро", "Присоединиться", "Удалить", "Ничего не запланировано", "Ещё", "Цвет по умолчанию", "Предыдущий месяц", "Следующий месяц", "Задачи со сроком", "Найдено праздников: {n}. Выберите для них цвет.", "Импортировать праздники: {n}", "Цвет", "Выбрать месяц и год", "Год"],
+    ar: ["اليوم", "الانتقال إلى تاريخ", "استيراد العطل", "إغلاق", "تعديل الحدث", "إضافة حدث", "عنوان الحدث", "الوصف (اختياري)", "رابط الاجتماع (اختياري)", "التنبيه مفعّل", "بدون تنبيه", "حفظ", "تحديث", "إلغاء", "القادم", "الانضمام إلى الاجتماع", "حذف", "لا شيء مخطط", "المزيد", "اللون الافتراضي", "الشهر السابق", "الشهر التالي", "مهام ذات موعد", "تم العثور على {n} عطلة. اختر لونًا لها.", "استيراد {n} عطلة", "اللون", "اختيار الشهر والسنة", "السنة"],
+    hi: ["आज", "तारीख पर जाएँ", "छुट्टियाँ आयात करें", "बंद करें", "इवेंट संपादित करें", "इवेंट जोड़ें", "इवेंट का शीर्षक", "विवरण (वैकल्पिक)", "मीटिंग लिंक (वैकल्पिक)", "अलर्ट चालू", "कोई अलर्ट नहीं", "सहेजें", "अपडेट करें", "रद्द करें", "आने वाले", "मीटिंग में शामिल हों", "हटाएँ", "कुछ भी नियोजित नहीं", "और", "डिफ़ॉल्ट रंग", "पिछला महीना", "अगला महीना", "नियत तिथि वाले कार्य", "{n} छुट्टियाँ मिलीं। उनके लिए रंग चुनें।", "{n} छुट्टियाँ आयात करें", "रंग", "महीना और वर्ष चुनें", "वर्ष"]
+  };
+  const KC_DICT = {};
+  Object.keys(KC_VALUES).forEach((lg) => {
+    KC_DICT[lg] = {};
+    KC_KEYS.forEach((k, i) => {
+      KC_DICT[lg][k] = KC_VALUES[lg][i];
+    });
+  });
+  const kcText = (lang) => {
+    const d = KC_DICT[lang] || KC_DICT.en;
+    return (k, n) => String(d[k] || KC_DICT.en[k] || k).replace("{n}", String(n === void 0 ? "" : n));
+  };
+  const KC_COLORS = ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"];
+  const KC_CSS = `
+.kocal-panel .material-symbols-outlined { font-family: 'Material Symbols Rounded', 'Material Symbols Outlined'; font-variation-settings: 'FILL' 0, 'wght' 400; }
+.kocal-panel .kocal-fill { font-variation-settings: 'FILL' 1, 'wght' 400; }
+.kocal-panel button { cursor: pointer; font-family: inherit; }
+.kocal-panel button:disabled { cursor: not-allowed; opacity: .5; }
+.kocal-panel button:focus-visible, .kocal-panel input:focus-visible, .kocal-panel textarea:focus-visible { outline: 2px solid var(--kb-accent, #7c9cff); outline-offset: 2px; }
+.kocal-panel .kc-cell:hover:not([aria-pressed="true"]) { background: var(--kb-bg-tile, rgba(255,255,255,.06)); }
+.kocal-panel .kc-year::-webkit-outer-spin-button, .kocal-panel .kc-year::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+`;
+  const kcDot = (color, size = 6) => ({ width: size, height: size, borderRadius: size / 2, background: color, flexShrink: 0 });
+  const kcChip = (on) => ({ height: 32, padding: "0 12px", borderRadius: 10, border: 0, background: on ? T_CONTAINER : T_TILE, color: on ? T_ON_CONTAINER : T_FG2, fontSize: 12, fontWeight: 600, display: "flex", alignItems: "center", gap: 6 });
   const KoCalendarPluginPanel = (props) => {
     const { onClose, anchorRect } = props;
     const edgePosition = useAppStore((state) => state.edgePosition);
-    useAppStore((state) => state.design);
-    useAppStore((state) => state.glassOpacity);
     const screenBounds = useAppStore((state) => state.screenBounds);
     const isSmartPositioning = useAppStore((state) => state.isPopupSmartPositioning);
-    useAppStore((state) => state.isMac);
+    const sidebarPosition = useAppStore((state) => state.sidebarPosition);
+    const orientation = useAppStore((state) => state.orientation);
+    const language = useAppStore((state) => state.language);
+    const lang = KC_DICT[language] ? language : "en";
+    const tr = kcText(lang);
+    const gt = GCAL_TEXT[lang] || GCAL_TEXT.en;
+    const dfmt = (d, opts) => new Intl.DateTimeFormat(lang, opts).format(d);
     const todos = (() => {
       try {
-        return JSON.parse(localStorage.getItem("kobar_plugin_todos") || "[]");
+        const v = JSON.parse(localStorage.getItem("kobar_plugin_todos") || "[]");
+        return Array.isArray(v) ? v : [];
       } catch {
         return [];
       }
@@ -1884,7 +1924,7 @@
       }
       return [];
     });
-    const [koCalendarColor, setKoCalendarColorState] = useState(() => {
+    const [koCalendarColor, setKoCalendarColor] = useState(() => {
       try {
         const saved = localStorage.getItem("kobar_plugin_calendar_color");
         if (saved) return saved;
@@ -1892,20 +1932,43 @@
       }
       return "#60a5fa";
     });
+    const [currentDate, setCurrentDate] = useState(/* @__PURE__ */ new Date());
+    const [selectedDate, setSelectedDate] = useState(/* @__PURE__ */ new Date());
+    const [editingEventDate, setEditingEventDate] = useState(null);
+    const [editingEventId, setEditingEventId] = useState(null);
+    const [newEventTitle, setNewEventTitle] = useState("");
+    const [newEventDescription, setNewEventDescription] = useState("");
+    const [newEventMeetingLink, setNewEventMeetingLink] = useState("");
+    const [newEventHours, setNewEventHours] = useState("12");
+    const [newEventMinutes, setNewEventMinutes] = useState("00");
+    const [newEventNotification, setNewEventNotification] = useState(true);
+    const [newEventColor, setNewEventColor] = useState(koCalendarColor);
+    const [pendingHolidays, setPendingHolidays] = useState(null);
+    const [importColor, setImportColor] = useState(koCalendarColor);
+    const [isPickerMode, setIsPickerMode] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
     useEffect(() => {
       localStorage.setItem("kobar_plugin_events", JSON.stringify(localEvents));
       pushBarState();
     }, [localEvents]);
     useEffect(() => {
+      localStorage.setItem("kobar_plugin_calendar_color", koCalendarColor);
+    }, [koCalendarColor]);
+    const layersRef = useRef({});
+    layersRef.current = { menuOpen, editing: !!editingEventDate, importing: !!pendingHolidays, picker: isPickerMode };
+    useEffect(() => {
       const onKey = (e) => {
-        if (e.key === "Escape") onClose();
+        if (e.key !== "Escape") return;
+        const l = layersRef.current;
+        if (l.menuOpen) setMenuOpen(false);
+        else if (l.editing) closeForm();
+        else if (l.importing) setPendingHolidays(null);
+        else if (l.picker) setIsPickerMode(false);
+        else onClose();
       };
       document.addEventListener("keydown", onKey);
       return () => document.removeEventListener("keydown", onKey);
     }, [onClose]);
-    useEffect(() => {
-      localStorage.setItem("kobar_plugin_calendar_color", koCalendarColor);
-    }, [koCalendarColor]);
     const addCalendarEvent = (event) => {
       setLocalEventsState((prev) => [...prev, { ...event, id: Date.now().toString() + "-" + Math.floor(Math.random() * 1e3), colorId: event.colorId || koCalendarColor }]);
     };
@@ -1915,13 +1978,6 @@
     const deleteCalendarEvent = (id) => {
       setLocalEventsState((prev) => prev.filter((e) => e.id !== id));
     };
-    const setKoCalendarColor = (color) => {
-      setKoCalendarColorState(color);
-    };
-    const t = useAppStore((state) => state.t) || ((k) => k);
-    const language = useAppStore((state) => state.language);
-    const gt = GCAL_TEXT[language] || GCAL_TEXT.en;
-    const [currentDate, setCurrentDate] = useState(/* @__PURE__ */ new Date());
     const [gcalState, setGcalState] = useState(null);
     const [gcalEvents, setGcalEvents] = useState([]);
     const gcalMonthKey = format(currentDate, "yyyy-MM");
@@ -1963,25 +2019,11 @@
       } catch {
       }
     };
-    const [selectedDate, setSelectedDate] = useState(/* @__PURE__ */ new Date());
-    const [editingEventDate, setEditingEventDate] = useState(null);
-    const [editingEventId, setEditingEventId] = useState(null);
-    const [newEventTitle, setNewEventTitle] = useState("");
-    const [newEventDescription, setNewEventDescription] = useState("");
-    const [newEventMeetingLink, setNewEventMeetingLink] = useState("");
-    const [newEventHours, setNewEventHours] = useState("12");
-    const [newEventMinutes, setNewEventMinutes] = useState("00");
-    const [newEventNotification, setNewEventNotification] = useState(true);
-    const [newEventColor, setNewEventColor] = useState(koCalendarColor);
-    const [pendingHolidays, setPendingHolidays] = useState(null);
-    const [importColor, setImportColor] = useState(koCalendarColor);
-    const [isPickerMode, setIsPickerMode] = useState(false);
-    const sidebarPosition = useAppStore((state) => state.sidebarPosition);
-    const orientation = useAppStore((state) => state.orientation);
+    const PANEL_W = 400;
     const getPopupStyle = () => {
       if (!anchorRect) return { display: "none" };
       const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
-      const popupWidth = 480;
+      const popupWidth = PANEL_W;
       const screenHeight = screenBounds?.height ?? 800;
       const screenWidth = screenBounds?.width ?? 1200;
       const offsetTop = sidebarPosition ? sidebarPosition.y : 0;
@@ -1996,6 +2038,7 @@
         borderRadius: 32,
         boxShadow: "var(--kb-shadow-e3, 0 12px 32px rgba(0,0,0,.45))",
         color: T_FG1,
+        fontFamily: "var(--kb-font, inherit)",
         willChange: "transform, opacity",
         transitionProperty: "opacity, transform, filter"
       };
@@ -2054,7 +2097,7 @@
         const newX = e.detail.x;
         const newY = e.detail.y;
         const popupHeight = Math.min(780, (screenBounds?.height ?? 800) - 48);
-        const popupWidth = 480;
+        const popupWidth = PANEL_W;
         const screenXInViewport = (screenBounds?.x ?? 0) - window.screenX;
         const screenYInViewport = (screenBounds?.y ?? 0) - window.screenY;
         if (orientation === "horizontal") {
@@ -2105,9 +2148,139 @@
         fileInputRef.current.value = "";
       }
     };
+    const formRef = useRef(null);
+    useEffect(() => {
+      if (editingEventDate && formRef.current) formRef.current.scrollIntoView({ block: "nearest" });
+    }, [editingEventDate, editingEventId]);
+    const closeForm = () => {
+      setEditingEventDate(null);
+      setEditingEventId(null);
+      setNewEventTitle("");
+      setNewEventDescription("");
+      setNewEventMeetingLink("");
+    };
+    const openAddForm = (day) => {
+      setMenuOpen(false);
+      setEditingEventDate(day);
+      setEditingEventId(null);
+      setNewEventColor(koCalendarColor);
+    };
+    const openEditForm = (ev) => {
+      const d = parseISO(ev.startTime);
+      setEditingEventDate(d);
+      setEditingEventId(ev.id);
+      setNewEventTitle(ev.title);
+      setNewEventDescription(ev.description || "");
+      setNewEventMeetingLink(ev.meetingLink || "");
+      setNewEventHours(format(d, "HH"));
+      setNewEventMinutes(format(d, "mm"));
+      setNewEventNotification(!!ev.notificationEnabled);
+      setNewEventColor(ev.colorId || koCalendarColor);
+    };
+    const submitForm = (e) => {
+      e.preventDefault();
+      if (!newEventTitle.trim()) return;
+      const eventStart = new Date(editingEventDate);
+      eventStart.setHours(parseInt(newEventHours, 10) || 0);
+      eventStart.setMinutes(parseInt(newEventMinutes, 10) || 0);
+      eventStart.setSeconds(0);
+      if (editingEventId) {
+        updateCalendarEvent(editingEventId, {
+          title: newEventTitle.trim(),
+          description: newEventDescription.trim(),
+          meetingLink: newEventMeetingLink.trim(),
+          startTime: eventStart.toISOString(),
+          endTime: eventStart.toISOString(),
+          notificationEnabled: newEventNotification,
+          colorId: newEventColor
+        });
+      } else {
+        addCalendarEvent({
+          title: newEventTitle.trim(),
+          description: newEventDescription.trim(),
+          meetingLink: newEventMeetingLink.trim(),
+          startTime: eventStart.toISOString(),
+          endTime: eventStart.toISOString(),
+          notificationEnabled: newEventNotification,
+          notificationMinutes: 15,
+          colorId: newEventColor
+        });
+      }
+      closeForm();
+    };
+    const doImport = () => {
+      const addedKeys = /* @__PURE__ */ new Set();
+      pendingHolidays.forEach((holiday) => {
+        if (holiday.date) {
+          const date = new Date(holiday.date);
+          date.setHours(0, 0, 0, 0);
+          const startTime = date.toISOString();
+          const title = holiday.name || "Holiday";
+          const key = `${title}-${startTime}`;
+          const isDuplicate = localEvents.some((ev) => ev.title === title && ev.startTime === startTime);
+          if (!isDuplicate && !addedKeys.has(key)) {
+            addedKeys.add(key);
+            addCalendarEvent({ title, startTime, endTime: startTime, notificationEnabled: false, notificationMinutes: 15, colorId: importColor });
+          }
+        }
+      });
+      setPendingHolidays(null);
+    };
     const monthStart = startOfMonth(currentDate);
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
     const dayIntervals = Array.from({ length: 42 }).map((_, i) => addDays(startDate, i));
+    const selVisible = dayIntervals.some((d) => isSameDay(d, selectedDate));
+    const focusSelRef = useRef(false);
+    useEffect(() => {
+      if (!focusSelRef.current) return;
+      focusSelRef.current = false;
+      const el = popupRef.current && popupRef.current.querySelector('[data-kc-sel="1"]');
+      if (el) el.focus();
+    }, [selectedDate]);
+    const onCellKey = (e) => {
+      const step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      if (!step) return;
+      e.preventDefault();
+      const next = addDays(selectedDate, step);
+      focusSelRef.current = true;
+      setSelectedDate(next);
+      if (!isSameMonth(next, currentDate)) setCurrentDate(next);
+    };
+    const eventsOn = (day) => localEvents.filter((ev) => ev && ev.startTime && isSameDay(parseISO(ev.startTime), day));
+    const byTime = (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+    const dayEvents = eventsOn(selectedDate).sort(byTime);
+    const dayGoogle = gcalActive ? gcalEventsOnDay(gcalEvents, selectedDate) : [];
+    const dayTodos = todos.filter((x) => x && x.dueDate && isSameDay(parseISO(x.dueDate), selectedDate));
+    const nextDayStart = new Date(selectedDate);
+    nextDayStart.setHours(0, 0, 0, 0);
+    nextDayStart.setDate(nextDayStart.getDate() + 1);
+    const upcoming = localEvents.filter((ev) => ev && ev.startTime && new Date(ev.startTime) >= nextDayStart).sort(byTime).slice(0, 4);
+    const hasDayItems = dayEvents.length + dayGoogle.length + dayTodos.length > 0;
+    dayEvents.length + dayGoogle.length;
+    const monthTitle = dfmt(currentDate, { month: "long" }) + " " + currentDate.getFullYear();
+    const ColorDots = ({ value, onPick, size = 20 }) => /* @__PURE__ */ window.React.createElement("div", { className: "flex", style: { gap: 8, alignItems: "center" } }, KC_COLORS.map((color) => /* @__PURE__ */ window.React.createElement(
+      "button",
+      {
+        key: color,
+        type: "button",
+        "aria-label": tr("colorLabel") + " " + color,
+        "aria-pressed": value === color,
+        onClick: () => onPick(color),
+        style: { width: size, height: size, borderRadius: size / 2, border: 0, padding: 0, backgroundColor: color, opacity: value === color ? 1 : 0.5, boxShadow: value === color ? "0 0 0 2px " + T_SURFACE + ", 0 0 0 4px " + T_FG2 : "none" }
+      }
+    )));
+    const cardStyle = { background: T_SURFACE, borderRadius: 24, padding: 16, display: "flex", flexDirection: "column", gap: 12 };
+    const rowStyle = { borderRadius: 16, background: T_TILE, minHeight: 52, padding: "8px 8px 8px 12px", display: "flex", alignItems: "center", gap: 12 };
+    const smallBtn = (danger) => ({ width: 32, height: 32, borderRadius: 16, border: 0, background: T_INSET, color: danger ? "var(--kb-danger, #f87171)" : T_FG1, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 });
+    const ico = (name, size = 18, fill) => /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined" + (fill ? " kocal-fill" : ""), style: { fontSize: size } }, name);
+    const renderEventRow = (ev, showDate) => {
+      const d = parseISO(ev.startTime);
+      const col = ev.colorId || koCalendarColor;
+      return /* @__PURE__ */ window.React.createElement("div", { key: ev.id, style: rowStyle }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 4, height: 28, borderRadius: 2, background: col, flexShrink: 0 } }), /* @__PURE__ */ window.React.createElement("div", { style: { minWidth: 0, flex: 1, cursor: showDate ? "pointer" : "default" }, onClick: showDate ? () => {
+        setSelectedDate(d);
+        setCurrentDate(d);
+      } : void 0 }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center", style: { gap: 6 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: T_FG1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, ev.title), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 14, color: T_FG3, flexShrink: 0 } }, "notifications_active")), /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 12, color: T_FG2, fontVariantNumeric: "tabular-nums", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, title: ev.description || void 0 }, showDate ? dfmt(d, { day: "numeric", month: "short" }) + " · " : "", format(d, "HH:mm"), ev.description ? " · " + ev.description : "")), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => window.api?.openExternal?.(ev.meetingLink), style: { ...smallBtn(false), background: T_CONTAINER, color: T_ON_CONTAINER }, title: tr("join"), "aria-label": tr("join") }, ico("videocam")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => openEditForm(ev), style: smallBtn(false), title: tr("edit"), "aria-label": tr("edit") }, ico("edit")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => deleteCalendarEvent(ev.id), style: smallBtn(true), title: tr("del"), "aria-label": tr("del") }, ico("delete")));
+    };
     return /* @__PURE__ */ window.React.createElement(
       "div",
       {
@@ -2115,50 +2288,30 @@
         className: "kocal-panel pointer-events-auto overflow-hidden flex flex-col",
         style: { ...getPopupStyle(), padding: 20 }
       },
-      /* @__PURE__ */ window.React.createElement("style", null, ICON_CSS),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center drag-region", style: { gap: 12, marginBottom: 16, flex: "none" } }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24, color: T_ACCENT } }, "calendar_month")), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 no-drag-region", style: { display: "flex", flexDirection: "column", gap: 4, minWidth: 0 } }, /* @__PURE__ */ window.React.createElement(
+      /* @__PURE__ */ window.React.createElement("style", null, KC_CSS),
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center drag-region", style: { gap: 12, marginBottom: 16, flex: "none" } }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24, color: T_ACCENT } }, "calendar_month")), /* @__PURE__ */ window.React.createElement("div", { className: "flex-1 no-drag-region", style: { minWidth: 0 } }, /* @__PURE__ */ window.React.createElement(
         "button",
         {
           type: "button",
           onClick: () => setIsPickerMode(!isPickerMode),
           className: "flex items-center whitespace-nowrap",
           style: { background: "transparent", border: 0, padding: 0, color: T_FG1, fontSize: 19, fontWeight: 600, fontFamily: T_DISPLAY, textAlign: "start", gap: 2 },
-          title: t("jumpToDate") || "Jump to Date",
+          title: tr("jump"),
+          "aria-label": tr("jump") + ": " + monthTitle,
           "aria-expanded": isPickerMode
         },
-        /* @__PURE__ */ window.React.createElement("span", null, t(`month_${currentDate.getMonth()}`), " ", currentDate.getFullYear()),
-        /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20, color: T_FG2 } }, isPickerMode ? "arrow_drop_up" : "arrow_drop_down")
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "flex", style: { gap: 8 } }, ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"].map((color) => /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          key: color,
-          type: "button",
-          "aria-label": color,
-          "aria-pressed": koCalendarColor === color,
-          onClick: () => setKoCalendarColor(color),
-          style: { width: 12, height: 12, borderRadius: 6, border: 0, padding: 0, backgroundColor: color, opacity: koCalendarColor === color ? 1 : 0.45, boxShadow: koCalendarColor === color ? "0 0 0 2px " + T_SHELL + ", 0 0 0 3.5px " + T_FG2 : "none" }
-        }
-      )))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center shrink-0 no-drag-region" }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => onClose(), style: iconBtn, "aria-label": t("close") || "Close" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "close")))),
-      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center no-drag-region", style: { gap: 6, marginBottom: 16, flex: "none" } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handlePrevMonth, style: iconBtn, "aria-label": "‹" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_left")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleNextMonth, style: iconBtn, "aria-label": "›" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22 } }, "chevron_right")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleToday, style: { height: 32, padding: "0 14px", borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 } }, t("today")), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => fileInputRef.current?.click(), style: iconBtn, title: t("importHolidays") || "Import Holidays", "aria-label": t("importHolidays") || "Import Holidays" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 20 } }, "download")), /* @__PURE__ */ window.React.createElement(
-        "input",
-        {
-          type: "file",
-          accept: ".json",
-          ref: fileInputRef,
-          onChange: handleImportHolidays,
-          style: { display: "none" }
-        }
-      )),
-      /* @__PURE__ */ window.React.createElement("div", { className: "kocal-body custom-scrollbar flex flex-col flex-1", style: { minHeight: 0, overflowY: "auto", overflowX: "hidden" } }, isPickerMode ? /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-4 flex-1", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, /* @__PURE__ */ window.React.createElement("style", null, `
-                        .hide-number-arrows::-webkit-outer-spin-button,
-                        .hide-number-arrows::-webkit-inner-spin-button {
-                            -webkit-appearance: none;
-                            margin: 0;
-                        }
-                    `), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-center gap-4" }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setCurrentDate(subMonths(currentDate, 12)), style: iconBtn }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "chevron_left")), /* @__PURE__ */ window.React.createElement(
+        /* @__PURE__ */ window.React.createElement("span", null, monthTitle),
+        /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 22, color: T_FG2 } }, isPickerMode ? "arrow_drop_up" : "arrow_drop_down")
+      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center shrink-0 no-drag-region" }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => onClose(), style: iconBtn, "aria-label": tr("close") }, ico("close", 20)))),
+      /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center no-drag-region", style: { gap: 8, marginBottom: 12, flex: "none", position: "relative" } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handlePrevMonth, style: iconBtn, "aria-label": tr("prev"), title: tr("prev") }, ico("chevron_left", 22)), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleNextMonth, style: iconBtn, "aria-label": tr("next"), title: tr("next") }, ico("chevron_right", 22)), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: handleToday, style: { height: 36, padding: "0 16px", borderRadius: 18, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 } }, tr("today")), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setMenuOpen(!menuOpen), style: { ...iconBtn, background: menuOpen ? T_CONTAINER : T_INSET, color: menuOpen ? T_ON_CONTAINER : T_FG1 }, "aria-label": tr("more"), title: tr("more"), "aria-expanded": menuOpen, "aria-haspopup": "menu" }, ico("more_horiz", 22)), /* @__PURE__ */ window.React.createElement("input", { type: "file", accept: ".json", ref: fileInputRef, onChange: handleImportHolidays, style: { display: "none" } }), menuOpen && /* @__PURE__ */ window.React.createElement("div", { role: "menu", style: { position: "absolute", top: 44, right: 0, zIndex: 5, width: 248, background: T_SURFACE, border: "1px solid var(--kb-stroke-subtle, rgba(255,255,255,.1))", borderRadius: 20, padding: 8, boxShadow: "var(--kb-shadow-e3, 0 12px 32px rgba(0,0,0,.45))", display: "flex", flexDirection: "column", gap: 4 } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", role: "menuitem", onClick: () => {
+        setMenuOpen(false);
+        fileInputRef.current?.click();
+      }, style: { height: 44, borderRadius: 14, border: 0, background: "transparent", color: T_FG1, display: "flex", alignItems: "center", gap: 12, padding: "0 12px", fontSize: 14, fontWeight: 500, textAlign: "start" } }, /* @__PURE__ */ window.React.createElement("span", { style: { color: T_FG2, display: "flex" } }, ico("download", 20)), tr("importHolidays")), /* @__PURE__ */ window.React.createElement("div", { style: { padding: "8px 12px 10px" } }, /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 12, fontWeight: 600, color: T_FG2, marginBottom: 8 } }, tr("defColor")), /* @__PURE__ */ window.React.createElement(ColorDots, { value: koCalendarColor, onPick: setKoCalendarColor, size: 24 })))),
+      /* @__PURE__ */ window.React.createElement("div", { className: "kocal-body custom-scrollbar flex flex-col", style: { minHeight: 0, flex: "1 1 auto", overflowY: "auto", overflowX: "hidden", gap: 12 } }, isPickerMode ? /* @__PURE__ */ window.React.createElement("div", { style: { ...cardStyle, gap: 16 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-center", style: { gap: 16 } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setCurrentDate(subMonths(currentDate, 12)), style: iconBtn, "aria-label": tr("prev") }, ico("chevron_left", 20)), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "number",
+          "aria-label": tr("year"),
           value: currentDate.getFullYear(),
           onChange: (e) => {
             const val = parseInt(e.target.value);
@@ -2168,292 +2321,82 @@
               setCurrentDate(d);
             }
           },
-          className: "bg-transparent text-center w-20 outline-none no-drag-region hide-number-arrows",
-          style: { WebkitAppearance: "none", margin: 0, fontSize: 22, fontWeight: 600, fontFamily: T_DISPLAY, color: T_FG1, fontVariantNumeric: "tabular-nums" }
+          className: "kc-year no-drag-region",
+          style: { background: "transparent", border: 0, outline: "none", textAlign: "center", width: 80, fontSize: 22, fontWeight: 600, fontFamily: T_DISPLAY, color: T_FG1, fontVariantNumeric: "tabular-nums" }
         }
-      ), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setCurrentDate(addMonths(currentDate, 12)), style: iconBtn }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[20px]" }, "chevron_right"))), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-3 gap-2 flex-1 mt-2" }, Array.from({ length: 12 }).map((_, i) => /* @__PURE__ */ window.React.createElement(
+      ), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setCurrentDate(addMonths(currentDate, 12)), style: iconBtn, "aria-label": tr("next") }, ico("chevron_right", 20))), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-3", style: { gap: 8 } }, Array.from({ length: 12 }).map((_, i) => /* @__PURE__ */ window.React.createElement(
         "button",
         {
           key: i,
+          type: "button",
           onClick: () => {
             const d = new Date(currentDate);
+            d.setDate(1);
             d.setMonth(i);
             setCurrentDate(d);
             setIsPickerMode(false);
           },
-          className: "flex items-center justify-center text-sm h-12",
-          style: { borderRadius: 16, border: 0, fontWeight: 600, background: currentDate.getMonth() === i ? T_ACCENT : T_TILE, color: currentDate.getMonth() === i ? T_ON_ACCENT : T_FG1 }
+          style: { height: 48, borderRadius: 16, border: 0, fontSize: 14, fontWeight: 600, background: currentDate.getMonth() === i ? T_ACCENT : T_TILE, color: currentDate.getMonth() === i ? T_ON_ACCENT : T_FG1 }
         },
-        t(`month_${i}`)
-      )))) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-7", style: { gap: 4, paddingBottom: 6 } }, [5, 6, 7, 8, 9, 10, 11].map((day, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, className: "text-center text-xs font-semibold", style: { color: T_FG3 } }, new Intl.DateTimeFormat(language || "en", { weekday: "short" }).format(new Date(2026, 0, day))))), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-7 custom-scrollbar overflow-y-auto", style: { gap: 4, marginBottom: 12 } }, dayIntervals.map((day, i) => {
+        dfmt(new Date(2026, i, 1), { month: "short" })
+      )))) : /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, /* @__PURE__ */ window.React.createElement("div", { role: "grid", "aria-label": monthTitle }, /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-7", style: { gap: 4, paddingBottom: 4 } }, [5, 6, 7, 8, 9, 10, 11].map((day, i) => /* @__PURE__ */ window.React.createElement("div", { key: i, style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: T_FG3 } }, dfmt(new Date(2026, 0, day), { weekday: "short" })))), /* @__PURE__ */ window.React.createElement("div", { className: "grid grid-cols-7", style: { gap: "2px 4px" } }, dayIntervals.map((day, i) => {
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isToday = isSameDay(day, /* @__PURE__ */ new Date());
         const isSelected = isSameDay(day, selectedDate);
-        const isWeekend = i % 7 >= 5;
-        const dayEvents = localEvents.filter((ev) => ev.startTime && isSameDay(parseISO(ev.startTime), day));
-        const dayTodos = todos.filter((t2) => t2.dueDate && isSameDay(parseISO(t2.dueDate), day));
+        const evs = eventsOn(day);
+        const hasTodo = todos.some((x) => x && x.dueDate && isSameDay(parseISO(x.dueDate), day));
+        const hasG = gcalActive && gcalEventsOnDay(gcalEvents, day).length > 0;
         return /* @__PURE__ */ window.React.createElement(
-          "div",
+          "button",
           {
             key: i,
-            onClick: () => setSelectedDate(day),
-            onDoubleClick: () => {
-              setEditingEventDate(day);
-              setNewEventColor(koCalendarColor);
-            },
+            type: "button",
+            role: "gridcell",
+            className: "kc-cell",
+            "data-kc-sel": isSelected ? "1" : "0",
+            tabIndex: isSelected || !selVisible && i === 7 ? 0 : -1,
             "aria-pressed": isSelected,
-            className: "kocal-cell flex flex-col h-[56px] p-1.5 relative cursor-pointer group",
-            style: {
-              borderRadius: 12,
-              background: isSelected ? T_CONTAINER : isWeekend ? T_TILE : T_SURFACE,
-              opacity: isCurrentMonth ? 1 : 0.35,
-              boxShadow: editingEventDate && isSameDay(day, editingEventDate) ? "inset 0 0 0 2px " + T_ACCENT : "none",
-              overflow: "hidden"
-            }
+            "aria-current": isToday ? "date" : void 0,
+            "aria-label": dfmt(day, { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
+            onClick: () => setSelectedDate(day),
+            onDoubleClick: () => openAddForm(day),
+            onKeyDown: onCellKey,
+            style: { height: 40, borderRadius: 14, border: 0, background: isSelected ? T_CONTAINER : "transparent", opacity: isCurrentMonth ? 1 : 0.4, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, padding: 0 }
           },
-          /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-center items-center", style: { marginBottom: 4 } }, /* @__PURE__ */ window.React.createElement(
-            "span",
-            {
-              className: "flex items-center justify-center",
-              style: {
-                width: 26,
-                height: 26,
-                borderRadius: 13,
-                fontSize: 13,
-                fontWeight: 600,
-                fontVariantNumeric: "tabular-nums",
-                background: isToday ? T_ACCENT : "transparent",
-                color: isToday ? T_ON_ACCENT : isSelected ? T_ON_CONTAINER : isCurrentMonth ? T_FG1 : T_FG3
-              }
-            },
-            format(day, "d")
-          )),
-          /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-wrap justify-center mt-auto", style: { gap: 3 } }, dayEvents.slice(0, 3).map((ev, ei) => /* @__PURE__ */ window.React.createElement("div", { key: ei, style: { width: 6, height: 6, borderRadius: 3, backgroundColor: ev.colorId || koCalendarColor }, title: ev.title })), gcalActive && gcalEventsOnDay(gcalEvents, day).length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { width: 6, height: 6, borderRadius: 3, backgroundColor: GCAL_COLOR }, title: gt.title }), dayTodos.length > 0 && /* @__PURE__ */ window.React.createElement("div", { style: { width: 6, height: 6, borderRadius: 3, backgroundColor: T_FG3 } }))
+          /* @__PURE__ */ window.React.createElement("span", { style: { width: 26, height: 26, borderRadius: 13, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 600, fontVariantNumeric: "tabular-nums", background: isToday ? T_ACCENT : "transparent", color: isToday ? T_ON_ACCENT : isSelected ? T_ON_CONTAINER : isCurrentMonth ? T_FG1 : T_FG3 } }, format(day, "d")),
+          /* @__PURE__ */ window.React.createElement("span", { style: { display: "flex", gap: 3, height: 6 } }, evs.slice(0, 3).map((ev, ei) => /* @__PURE__ */ window.React.createElement("span", { key: ei, style: kcDot(ev.colorId || koCalendarColor, 5) })), hasG && /* @__PURE__ */ window.React.createElement("span", { style: kcDot(GCAL_COLOR, 5) }), hasTodo && /* @__PURE__ */ window.React.createElement("span", { style: kcDot(T_FG3, 5) }))
         );
-      })), pendingHolidays ? /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 flex-1", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center mb-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-sm font-semibold", style: { color: T_FG1 } }, t("importHolidays") || "Import Holidays"), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setPendingHolidays(null), style: { ...iconBtn, width: 28, height: 28, borderRadius: 14 }, "aria-label": t("close") || "Close" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "close"))), /* @__PURE__ */ window.React.createElement("div", { className: "text-xs mb-2", style: { color: T_FG2 } }, "Found ", pendingHolidays.length, " holidays. Select a color to associate with them:"), /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-2 w-fit mx-auto mb-2", style: { background: T_INSET, borderRadius: 16, padding: 8 } }, ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"].map((color) => /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          key: color,
-          type: "button",
-          onClick: () => setImportColor(color),
-          style: { width: 20, height: 20, borderRadius: 10, border: 0, backgroundColor: color, opacity: importColor === color ? 1 : 0.45, boxShadow: importColor === color ? "0 0 0 2px " + T_INSET + ", 0 0 0 3.5px " + T_FG2 : "none" }
-        }
-      ))), /* @__PURE__ */ window.React.createElement("div", { className: "mt-auto pt-2 flex justify-end" }, /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          onClick: () => {
-            const currentEvents = useAppStore.getState().localEvents || [];
-            const addedKeys = /* @__PURE__ */ new Set();
-            pendingHolidays.forEach((holiday) => {
-              if (holiday.date) {
-                const date = new Date(holiday.date);
-                date.setHours(0, 0, 0, 0);
-                const startTime = date.toISOString();
-                const title = holiday.name || "Holiday";
-                const key = `${title}-${startTime}`;
-                const isDuplicate = currentEvents.some((ev) => ev.title === title && ev.startTime === startTime);
-                if (!isDuplicate && !addedKeys.has(key)) {
-                  addedKeys.add(key);
-                  addCalendarEvent({
-                    title,
-                    startTime,
-                    endTime: startTime,
-                    notificationEnabled: false,
-                    notificationMinutes: 15,
-                    colorId: importColor
-                  });
-                }
-              }
-            });
-            setPendingHolidays(null);
-          },
-          style: { ...pillFilled, width: "100%" }
-        },
-        "Import ",
-        pendingHolidays.length,
-        " Holidays"
-      ))) : editingEventDate ? /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 flex-1", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center" }, /* @__PURE__ */ window.React.createElement("span", { className: "text-xs font-semibold", style: { color: T_FG1 } }, editingEventId ? t("editEvent") || "Edit Event" : t("addEvent") || "Add Event", ": ", format(editingEventDate, "MMM d, yyyy")), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
-        setEditingEventDate(null);
-        setEditingEventId(null);
-        setNewEventTitle("");
-        setNewEventDescription("");
-        setNewEventMeetingLink("");
-      }, style: { ...iconBtn, width: 28, height: 28, borderRadius: 14 }, "aria-label": t("close") || "Close" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, "close"))), /* @__PURE__ */ window.React.createElement("form", { onSubmit: (e) => {
-        e.preventDefault();
-        const eventStart = new Date(editingEventDate);
-        eventStart.setHours(parseInt(newEventHours, 10));
-        eventStart.setMinutes(parseInt(newEventMinutes, 10));
-        eventStart.setSeconds(0);
-        if (editingEventId) {
-          updateCalendarEvent(editingEventId, {
-            title: newEventTitle.trim(),
-            description: newEventDescription.trim(),
-            meetingLink: newEventMeetingLink.trim(),
-            startTime: eventStart.toISOString(),
-            endTime: eventStart.toISOString(),
-            notificationEnabled: newEventNotification,
-            colorId: newEventColor
-          });
-        } else {
-          addCalendarEvent({
-            title: newEventTitle.trim(),
-            description: newEventDescription.trim(),
-            meetingLink: newEventMeetingLink.trim(),
-            startTime: eventStart.toISOString(),
-            endTime: eventStart.toISOString(),
-            notificationEnabled: newEventNotification,
-            notificationMinutes: 15,
-            colorId: newEventColor
-          });
-        }
-        setNewEventTitle("");
-        setNewEventDescription("");
-        setNewEventMeetingLink("");
-        setEditingEventDate(null);
-        setEditingEventId(null);
-      }, className: "flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "relative flex flex-col gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "relative" }, /* @__PURE__ */ window.React.createElement(
-        "input",
-        {
-          autoFocus: true,
-          type: "text",
-          placeholder: t("eventTitle") || "Event Title",
-          value: newEventTitle,
-          onChange: (e) => setNewEventTitle(e.target.value),
-          className: "no-drag-region",
-          style: { ...inputStyle, paddingRight: 40 }
-        }
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-50" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "event"))), /* @__PURE__ */ window.React.createElement(
-        "textarea",
-        {
-          placeholder: t("eventDescription") || "Description (optional)",
-          value: newEventDescription,
-          onChange: (e) => setNewEventDescription(e.target.value),
-          className: "no-drag-region resize-none custom-scrollbar",
-          style: inputStyle,
-          rows: 2
-        }
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "relative" }, /* @__PURE__ */ window.React.createElement(
+      }))), pendingHolidays ? /* @__PURE__ */ window.React.createElement("div", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, fontFamily: T_DISPLAY, color: T_FG1 } }, tr("importHolidays")), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => setPendingHolidays(null), style: smallBtn(false), "aria-label": tr("cancel") }, ico("close"))), /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 13, color: T_FG2 } }, tr("found", pendingHolidays.length)), /* @__PURE__ */ window.React.createElement(ColorDots, { value: importColor, onPick: setImportColor, size: 24 }), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: doImport, style: { ...pillFilled, width: "100%" } }, tr("importN", pendingHolidays.length))) : editingEventDate ? /* @__PURE__ */ window.React.createElement("form", { ref: formRef, onSubmit: submitForm, style: cardStyle }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-between" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 15, fontWeight: 600, fontFamily: T_DISPLAY, color: T_FG1 } }, editingEventId ? tr("edit") : tr("add"), " · ", dfmt(editingEventDate, { day: "numeric", month: "short", year: "numeric" }))), /* @__PURE__ */ window.React.createElement("input", { autoFocus: true, type: "text", placeholder: tr("evTitle"), "aria-label": tr("evTitle"), value: newEventTitle, onChange: (e) => setNewEventTitle(e.target.value), className: "no-drag-region", style: { ...inputStyle, background: T_INSET, height: 44 } }), /* @__PURE__ */ window.React.createElement("textarea", { placeholder: tr("evDesc"), "aria-label": tr("evDesc"), value: newEventDescription, onChange: (e) => setNewEventDescription(e.target.value), className: "no-drag-region custom-scrollbar", style: { ...inputStyle, resize: "none" }, rows: 2 }), /* @__PURE__ */ window.React.createElement("div", { className: "relative", style: { position: "relative" } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { position: "absolute", left: 14, top: 12, fontSize: 18, color: T_FG3 } }, "link"), /* @__PURE__ */ window.React.createElement("input", { type: "text", placeholder: tr("evLink"), "aria-label": tr("evLink"), value: newEventMeetingLink, onChange: (e) => setNewEventMeetingLink(e.target.value), className: "no-drag-region", style: { ...inputStyle, paddingLeft: 40, height: 44 } })), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center", style: { gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center", style: { background: T_INSET, borderRadius: 12, height: 32, padding: "0 10px", gap: 2 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16, color: T_FG3, marginRight: 4 } }, "schedule"), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "text",
-          placeholder: t("meetingLink") || "Meeting Link (optional)",
-          value: newEventMeetingLink,
-          onChange: (e) => setNewEventMeetingLink(e.target.value),
-          className: "no-drag-region",
-          style: { ...inputStyle, paddingLeft: 34 }
-        }
-      ), /* @__PURE__ */ window.React.createElement("div", { className: "absolute left-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-50" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "link")))), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1", style: { background: T_INSET, borderRadius: 16, padding: 6 } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] ml-1", style: { color: T_FG3 } }, "schedule"), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center" }, /* @__PURE__ */ window.React.createElement(
-        "input",
-        {
-          type: "text",
+          inputMode: "numeric",
           maxLength: 2,
+          "aria-label": "HH",
           value: newEventHours,
           onChange: (e) => {
             const v = e.target.value.replace(/\D/g, "").slice(0, 2);
             if (parseInt(v) < 24 || v === "") setNewEventHours(v);
           },
           onBlur: () => setNewEventHours((prev) => prev.padStart(2, "0")),
-          className: "w-6 bg-transparent text-center text-xs outline-none font-bold",
-          style: { color: T_FG1 }
+          style: { width: 24, background: "transparent", border: 0, outline: "none", textAlign: "center", fontSize: 13, fontWeight: 700, color: T_FG1, fontVariantNumeric: "tabular-nums" }
         }
       ), /* @__PURE__ */ window.React.createElement("span", { style: { color: T_FG3 } }, ":"), /* @__PURE__ */ window.React.createElement(
         "input",
         {
           type: "text",
+          inputMode: "numeric",
           maxLength: 2,
+          "aria-label": "MM",
           value: newEventMinutes,
           onChange: (e) => {
             const v = e.target.value.replace(/\D/g, "").slice(0, 2);
             if (parseInt(v) < 60 || v === "") setNewEventMinutes(v);
           },
           onBlur: () => setNewEventMinutes((prev) => prev.padStart(2, "0")),
-          className: "w-6 bg-transparent text-center text-xs outline-none font-bold",
-          style: { color: T_FG1 }
+          style: { width: 24, background: "transparent", border: 0, outline: "none", textAlign: "center", fontSize: 13, fontWeight: 700, color: T_FG1, fontVariantNumeric: "tabular-nums" }
         }
-      ))), /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          type: "button",
-          onClick: () => setNewEventNotification(!newEventNotification),
-          className: "flex items-center gap-2 text-[11px] font-semibold",
-          style: { height: 32, padding: "0 12px", borderRadius: 16, border: 0, background: newEventNotification ? T_CONTAINER : T_TILE, color: newEventNotification ? T_ON_CONTAINER : T_FG2 }
-        },
-        /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[16px]" }, newEventNotification ? "notifications_active" : "notifications_off"),
-        newEventNotification ? t("alertOn") || "Alert On" : t("noAlert") || "No Alert"
-      )), /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 mt-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex gap-2", style: { background: T_INSET, borderRadius: 16, padding: 8 } }, ["#60a5fa", "#f87171", "#4ade80", "#fbbf24", "#a78bfa"].map((color) => /* @__PURE__ */ window.React.createElement(
-        "button",
-        {
-          key: color,
-          type: "button",
-          onClick: () => setNewEventColor(color),
-          "aria-label": color,
-          "aria-pressed": newEventColor === color,
-          style: { width: 16, height: 16, borderRadius: 8, border: 0, backgroundColor: color, opacity: newEventColor === color ? 1 : 0.45, boxShadow: newEventColor === color ? "0 0 0 2px " + T_INSET + ", 0 0 0 3.5px " + T_FG2 : "none" }
-        }
-      ))), /* @__PURE__ */ window.React.createElement("button", { type: "submit", disabled: !newEventTitle.trim(), className: "ml-auto disabled:opacity-50 disabled:cursor-not-allowed", style: pillFilled }, editingEventId ? t("updateEvent") || "Update" : t("saveEvent") || "Save")))) : /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 flex-1 relative group overflow-hidden", style: { background: T_SURFACE, borderRadius: 24, padding: 16 } }, (() => {
-        const targetStartOfDay = new Date(selectedDate);
-        targetStartOfDay.setHours(0, 0, 0, 0);
-        const agendaData = localEvents.filter((e) => e.startTime && new Date(e.startTime) >= targetStartOfDay).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
-        const selectedDayHasEvent = agendaData.length > 0 && isSameDay(parseISO(agendaData[0].startTime), selectedDate);
-        return /* @__PURE__ */ window.React.createElement(window.React.Fragment, null, gcalNeedsSetup && (typeof window.api?.openSettings === "function" ? /* @__PURE__ */ window.React.createElement("button", { onClick: openGcalSettings, className: "text-[10px] text-left underline", style: { color: GCAL_COLOR } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup) : /* @__PURE__ */ window.React.createElement("span", { className: "text-[10px]", style: { color: T_FG2 } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup)), /* @__PURE__ */ window.React.createElement("div", { className: "flex justify-between items-center pr-1" }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 13, fontWeight: 600, color: T_FG2 } }, selectedDayHasEvent ? `${format(selectedDate, "MMM d")} - ${t("events") || "Events"}` : t("upcomingEvents") || "Upcoming Events"), /* @__PURE__ */ window.React.createElement("button", { onClick: () => {
-          setEditingEventDate(selectedDate);
-          setNewEventColor(koCalendarColor);
-        }, className: "flex items-center justify-center relative z-20", style: { width: 32, height: 32, borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER }, "aria-label": t("addEvent") || "Add Event" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[18px]" }, "add"))), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col gap-2 overflow-y-auto overflow-x-hidden custom-scrollbar pr-1", style: { maxHeight: 200 } }, gcalActive && gcalEventsOnDay(gcalEvents, selectedDate).map((gev) => /* @__PURE__ */ window.React.createElement("div", { key: gev.id, title: gt.title, className: "flex justify-between items-center text-sm px-3 py-2 cursor-default select-none", style: { borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px] shrink-0", style: { color: GCAL_COLOR } }, "event"), /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1 } }, gev.title)), /* @__PURE__ */ window.React.createElement("span", { className: "text-xs shrink-0", style: { color: GCAL_COLOR } }, gev.allDay ? gt.allDay : format(new Date(gev.start), "HH:mm")))), agendaData.slice(0, 8).map((ev) => {
-          const eventDate = parseISO(ev.startTime);
-          const isEvToday = isSameDay(eventDate, /* @__PURE__ */ new Date());
-          const isEvSelected = isSameDay(eventDate, selectedDate);
-          return /* @__PURE__ */ window.React.createElement(
-            "div",
-            {
-              key: ev.id,
-              onClick: () => {
-                setSelectedDate(eventDate);
-                setCurrentDate(eventDate);
-              },
-              className: "kocal-ev flex justify-between items-center text-sm px-3 py-2 cursor-pointer",
-              style: { borderRadius: 16, backgroundColor: T_TILE, minHeight: 48 }
-            },
-            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2.5 flex-1 min-w-0 mr-3" }, /* @__PURE__ */ window.React.createElement("div", { className: "shrink-0", style: { width: 8, height: 8, borderRadius: 4, backgroundColor: isEvSelected ? ev.colorId || koCalendarColor : isEvToday ? T_ACCENT : T_FG3 } }), /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col min-w-0 flex-1" }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-1" }, /* @__PURE__ */ window.React.createElement("span", { className: "truncate", style: { color: T_FG1, fontWeight: isEvSelected ? "600" : "400" } }, ev.title), ev.meetingLink && /* @__PURE__ */ window.React.createElement("button", { onClick: (e) => {
-              e.stopPropagation();
-              window.api?.openExternal?.(ev.meetingLink);
-            }, className: "ml-1 shrink-0 rounded-full w-5 h-5 flex items-center justify-center transition-colors", style: { background: T_CONTAINER, color: T_ON_CONTAINER }, title: t("joinMeeting") || "Join Meeting" }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[12px]" }, "videocam")), ev.notificationEnabled && /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-xs shrink-0", style: { color: T_FG3 } }, "notifications_active")), ev.description && /* @__PURE__ */ window.React.createElement("span", { className: "text-[11px] truncate mt-0.5", style: { color: T_FG2 }, title: ev.description }, ev.description))),
-            /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center gap-2 shrink-0" }, /* @__PURE__ */ window.React.createElement("span", { className: "kocal-ev-time text-xs", style: { color: T_FG2, fontVariantNumeric: "tabular-nums" } }, isEvSelected ? format(eventDate, "HH:mm") : format(eventDate, "MMM d")), /* @__PURE__ */ window.React.createElement(
-              "button",
-              {
-                onClick: (e) => {
-                  e.stopPropagation();
-                  const d = parseISO(ev.startTime);
-                  setEditingEventDate(d);
-                  setEditingEventId(ev.id);
-                  setNewEventTitle(ev.title);
-                  setNewEventDescription(ev.description || "");
-                  setNewEventMeetingLink(ev.meetingLink || "");
-                  setNewEventHours(format(d, "HH"));
-                  setNewEventMinutes(format(d, "mm"));
-                  setNewEventNotification(!!ev.notificationEnabled);
-                  setNewEventColor(ev.colorId || koCalendarColor);
-                },
-                "aria-label": t("editEvent") || "Edit Event",
-                className: "kocal-ev-act w-6 h-6 items-center justify-center rounded-full",
-                style: { background: T_CONTAINER, color: T_ON_CONTAINER }
-              },
-              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "edit")
-            ), /* @__PURE__ */ window.React.createElement(
-              "button",
-              {
-                onClick: (e) => {
-                  e.stopPropagation();
-                  deleteCalendarEvent(ev.id);
-                },
-                "aria-label": t("delete") || "Delete",
-                className: "kocal-ev-act w-6 h-6 items-center justify-center rounded-full",
-                style: { background: T_INSET, color: "var(--kb-danger, #f87171)" }
-              },
-              /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined text-[14px]" }, "delete")
-            ))
-          );
-        }), agendaData.length === 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col items-center text-center", style: { border: "2px dashed var(--kb-stroke-subtle, var(--theme-border, rgba(255,255,255,.1)))", borderRadius: 28, padding: "20px 16px", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-center", style: { width: 48, height: 48, borderRadius: 16, background: T_CONTAINER, color: T_ACCENT } }, /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined kocal-fill", style: { fontSize: 24 } }, "event_available")), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: T_FG1 } }, t("noEventsFound") || "No events found"))));
-      })())))
+      )), /* @__PURE__ */ window.React.createElement("button", { type: "button", "aria-pressed": newEventNotification, onClick: () => setNewEventNotification(!newEventNotification), style: kcChip(newEventNotification) }, ico(newEventNotification ? "notifications_active" : "notifications_off", 16, newEventNotification), newEventNotification ? tr("alertOn") : tr("alertOff")), /* @__PURE__ */ window.React.createElement("div", { style: { flex: 1 } })), /* @__PURE__ */ window.React.createElement(ColorDots, { value: newEventColor, onPick: setNewEventColor, size: 22 }), /* @__PURE__ */ window.React.createElement("div", { className: "flex", style: { gap: 8 } }, /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: closeForm, style: { ...pillFilled, background: T_CONTAINER, color: T_ON_CONTAINER, flex: "0 0 auto" } }, tr("cancel")), /* @__PURE__ */ window.React.createElement("button", { type: "submit", disabled: !newEventTitle.trim(), style: { ...pillFilled, flex: 1 } }, editingEventId ? tr("update") : tr("save")))) : /* @__PURE__ */ window.React.createElement("div", { style: cardStyle }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center", style: { gap: 12 } }, /* @__PURE__ */ window.React.createElement("div", { style: { minWidth: 0, flex: 1 } }, /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 15, fontWeight: 600, fontFamily: T_DISPLAY, color: T_FG1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, dfmt(selectedDate, { weekday: "long", day: "numeric", month: "long" })), /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 12, color: T_FG2, marginTop: 2 } }, isSameDay(selectedDate, /* @__PURE__ */ new Date()) ? tr("today") : selectedDate.getFullYear())), /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: () => openAddForm(selectedDate), style: { ...pillFilled, display: "flex", alignItems: "center", gap: 6, padding: "0 18px 0 14px" } }, ico("add", 20), tr("add"))), gcalNeedsSetup && (typeof window.api?.openSettings === "function" ? /* @__PURE__ */ window.React.createElement("button", { type: "button", onClick: openGcalSettings, style: { background: "transparent", border: 0, padding: 0, textAlign: "start", fontSize: 12, textDecoration: "underline", color: GCAL_COLOR } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup) : /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, color: T_FG2 } }, gcalState.state === "reconnect-needed" ? gt.reconnect : gt.setup)), hasDayItems && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col custom-scrollbar", style: { gap: 8, maxHeight: 224, overflowY: "auto", overflowX: "hidden" } }, dayGoogle.map((gev) => /* @__PURE__ */ window.React.createElement("div", { key: gev.id, title: gt.title, style: rowStyle }, /* @__PURE__ */ window.React.createElement("div", { style: { width: 4, height: 28, borderRadius: 2, background: GCAL_COLOR, flexShrink: 0 } }), /* @__PURE__ */ window.React.createElement("div", { style: { minWidth: 0, flex: 1 } }, /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 14, fontWeight: 600, color: T_FG1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, gev.title), /* @__PURE__ */ window.React.createElement("div", { style: { fontSize: 12, color: GCAL_COLOR, fontVariantNumeric: "tabular-nums" } }, gev.allDay ? gt.allDay : format(new Date(gev.start), "HH:mm"))), /* @__PURE__ */ window.React.createElement("span", { className: "material-symbols-outlined", style: { fontSize: 16, color: GCAL_COLOR, marginRight: 4 } }, "event"))), dayEvents.map((ev) => renderEventRow(ev, false)), dayTodos.map((x) => /* @__PURE__ */ window.React.createElement("div", { key: x.id, style: { ...rowStyle, minHeight: 44 } }, /* @__PURE__ */ window.React.createElement("span", { style: { color: T_FG3, display: "flex" } }, ico(x.completed ? "task_alt" : "radio_button_unchecked", 20)), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, color: T_FG2, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textDecoration: x.completed ? "line-through" : "none" } }, x.text || x.title), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 11, color: T_FG3, marginRight: 4 } }, tr("dueTasks"))))), !hasDayItems && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col items-center", style: { border: "2px dashed var(--kb-stroke-subtle, var(--theme-border, rgba(255,255,255,.1)))", borderRadius: 28, padding: "16px", gap: 8 } }, /* @__PURE__ */ window.React.createElement("div", { className: "flex items-center justify-center", style: { width: 44, height: 44, borderRadius: 15, background: T_CONTAINER, color: T_ACCENT } }, ico("event_available", 24, true)), /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: T_FG1 } }, tr("nothing"))), upcoming.length > 0 && /* @__PURE__ */ window.React.createElement("div", { className: "flex flex-col", style: { gap: 8 } }, /* @__PURE__ */ window.React.createElement("span", { style: { fontSize: 12, fontWeight: 600, color: T_FG2, letterSpacing: ".02em" } }, tr("upcoming")), upcoming.map((ev) => renderEventRow(ev, true))))))
     );
   };
   window.KoBarExtensions.registerPanel("ko-calender-plugin-panel", {
