@@ -31,5 +31,14 @@
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar2.png",
     "https://raw.githubusercontent.com/Kobar-Project/KoBar-Assets/main/Plugins%20images/KoCalendar/KoCalendar3.png"
   ],
-  "apiVersion": "1.0.0"
+  "apiVersion": "1.0.0",
+  "bar": {
+    "tile": {
+      "template": "value-caption",
+      "sensitive": false,
+      "live": false,
+      "pinnable": false
+    },
+    "defaultSize": "icon"
+  }
 }
