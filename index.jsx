@@ -427,28 +427,31 @@ const KoCalendarPluginPanel = (props) => {
                         ))}
                     </div>
                 </div>
-                <div className="flex items-center shrink-0 no-drag-region" style={{ gap: 6 }}>
-                    <button type="button" onClick={() => fileInputRef.current?.click()} style={iconBtn} title={t('importHolidays') || "Import Holidays"} aria-label={t('importHolidays') || "Import Holidays"}>
-                        <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
-                    </button>
-                    <input
-                        type="file"
-                        accept=".json"
-                        ref={fileInputRef}
-                        onChange={handleImportHolidays}
-                        style={{ display: 'none' }}
-                    />
-                    <button type="button" onClick={handlePrevMonth} style={iconBtn} aria-label="‹">
-                        <span className="material-symbols-outlined" style={{ fontSize: 22 }}>chevron_left</span>
-                    </button>
-                    <button type="button" onClick={handleNextMonth} style={iconBtn} aria-label="›">
-                        <span className="material-symbols-outlined" style={{ fontSize: 22 }}>chevron_right</span>
-                    </button>
-                    <button type="button" onClick={handleToday} style={{ height: 32, padding: '0 14px', borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 }}>{t('today')}</button>
+                <div className="flex items-center shrink-0 no-drag-region">
                     <button type="button" onClick={() => onClose()} style={iconBtn} aria-label={t('close') || 'Close'}>
                         <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
                     </button>
                 </div>
+            </div>
+            <div className="flex items-center no-drag-region" style={{ gap: 6, marginBottom: 16 }}>
+                <button type="button" onClick={handlePrevMonth} style={iconBtn} aria-label="‹">
+                    <span className="material-symbols-outlined" style={{ fontSize: 22 }}>chevron_left</span>
+                </button>
+                <button type="button" onClick={handleNextMonth} style={iconBtn} aria-label="›">
+                    <span className="material-symbols-outlined" style={{ fontSize: 22 }}>chevron_right</span>
+                </button>
+                <button type="button" onClick={handleToday} style={{ height: 32, padding: '0 14px', borderRadius: 16, border: 0, background: T_CONTAINER, color: T_ON_CONTAINER, fontSize: 13, fontWeight: 600 }}>{t('today')}</button>
+                <div style={{ flex: 1 }} />
+                <button type="button" onClick={() => fileInputRef.current?.click()} style={iconBtn} title={t('importHolidays') || "Import Holidays"} aria-label={t('importHolidays') || "Import Holidays"}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>download</span>
+                </button>
+                <input
+                    type="file"
+                    accept=".json"
+                    ref={fileInputRef}
+                    onChange={handleImportHolidays}
+                    style={{ display: 'none' }}
+                />
             </div>
 
             {isPickerMode ? (
@@ -503,8 +506,8 @@ const KoCalendarPluginPanel = (props) => {
             ) : (
             <>
             <div className="grid grid-cols-7" style={{ gap: 4, paddingBottom: 6 }}>
-                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-                    <div key={i} className="text-center text-xs font-semibold uppercase" style={{ color: T_FG3 }}>{d}</div>
+                {[5, 6, 7, 8, 9, 10, 11].map((day, i) => (
+                    <div key={i} className="text-center text-xs font-semibold" style={{ color: T_FG3 }}>{new Intl.DateTimeFormat(language || 'en', { weekday: 'short' }).format(new Date(2026, 0, day))}</div>
                 ))}
             </div>
 
@@ -793,7 +796,7 @@ const KoCalendarPluginPanel = (props) => {
                                     )
                                 )}
                                 <div className="flex justify-between items-center pr-1">
-                                    <span className="text-xs font-semibold uppercase" style={{ color: T_FG2, letterSpacing: '.06em' }}>
+                                    <span style={{ fontSize: 13, fontWeight: 600, color: T_FG2 }}>
                                         {selectedDayHasEvent ? `${format(selectedDate, 'MMM d')} - ${t('events') || 'Events'}` : (t('upcomingEvents') || 'Upcoming Events')}
                                     </span>
                                     <button onClick={() => {
